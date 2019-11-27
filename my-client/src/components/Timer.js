@@ -9,11 +9,12 @@ export default class Timer extends Component {
     this.state = {
         minutes: 1,
         seconds: 0,
-        apiResponse: ""
+        isPlayin: false
      }
     this.add_life_points = this.add_life_points.bind(this);
     this.play = this.play.bind(this);
-    //this.SDK = this.SDK.bind(this);
+    this.skip = this.skip.bind(this);
+    this.play_game= this.play_game.bind(this);
     }
 
     callAPI() {
@@ -64,8 +65,40 @@ export default class Timer extends Component {
     }
 
     play() {
-        console.log(JSON.stringify(window._DEVICE_ID))
+        //console.log(JSON.stringify(window._DEVICE_ID))
+        let position
+        if(window._PAUSE_POSITION) position=window._PAUSE_POSITION;
+        else position=0
         fetch('http://localhost:3000/play', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+            body:JSON.stringify({device: window._DEVICE_ID, position: position})
+        }).then((res) => res.json())
+        .then((data) => { 
+            let seconds=10;
+            this.playInterval = setInterval(() => {
+                
+                if (seconds > 0) {
+                        seconds=seconds - 1
+                    }
+                
+                if (seconds === 0) {
+                        console.log("replay")
+                        this.pause()
+                        clearInterval(this.playInterval)
+                    } 
+            }, 1000)
+            //console.log(data)
+        })
+        .catch((err)=> console.log(err))
+    }
+
+
+    skip() {
+        fetch('http://localhost:3000/skip', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -73,18 +106,44 @@ export default class Timer extends Component {
               },
             body:JSON.stringify({device: window._DEVICE_ID})
         }).then((res) => res.json())
-        .then((data) =>  console.log(data))
-        .catch((err)=>   console.log(err))
-      }
+        .then((data) => { 
+            //console.log(data)
+        })
+        .catch((err)=> console.log(err))
+    }
 
     componentWillUnmount() {
         clearInterval(this.myInterval)
     }
 
+    pause() {
+        fetch('http://localhost:3000/pause', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+            body:JSON.stringify({device: window._DEVICE_ID})
+        }).then((res) => res.json())
+        .then((data) => { 
+            console.log(data)
+        })
+        .catch((err)=> console.log(err))
+    }
+
+    play_game(){
+        if(!this.state.isPlayin){
+            this.setState(() => ({
+                isPlayin: true
+            }), this.play())
+        }
+    }
+
     render() {
         const { minutes, seconds } = this.state
+        if(window._DEVICE_ID && this.state.isPlayin ){
+        
         return (
-            
             <div>
                 { minutes === 0 && seconds === 0
                     ? <div><h1>Busted!</h1> <Link to={`/`}><button className="pageBtn" >Home</button></Link></div>
@@ -92,10 +151,15 @@ export default class Timer extends Component {
                 }
                 <Game/>
                 <button className="add_life" onClick={this.play}>Play Song</button>
+                <button className="add_life" onClick={this.skip}>Skip Song</button>
                 {/* <button className="add_life" onClick={this.SDK}>Play</button> */}
                 
             </div>
             
-        )
+          )
+        } else if(window._DEVICE_ID && !this.state.isPlayin ){
+            return <button className="add_life" onClick={this.play_game}>Play Game</button>
+        }   
+        else return <div>Loading...</div>
     }
 }

@@ -38,7 +38,7 @@ app.post('/play', async (req, res) => {
 
   const{ device, position}=req.body;
   const request_body={
-      "uris": ["spotify:track:7ce20yLkzuXXLUhzIDoZih"],
+      "uris": ["spotify:track:7ce20yLkzuXXLUhzIDoZih", "spotify:track:5bvnqVuq7UFl0txSlHpsfS"],
      "position_ms": position
       }
   let clientServerOptions = {

@@ -35,7 +35,8 @@
     window.onSpotifyWebPlaybackSDKReady = () => {
       const data = window._DEFAULT_DATA;
       const token = data;
-      console.log(token)
+      console.log("Token: "+ token)
+      if(token) {
       const player = new Spotify.Player({
         name: 'Web Playback SDK Quick Start Player',
         getOAuthToken: cb => { cb(token); }
@@ -48,7 +49,10 @@
       player.addListener('playback_error', ({ message }) => { console.error(message); });
 
       // Playback status updates
-      player.addListener('player_state_changed', state => { console.log(state); });
+      player.addListener('player_state_changed', state => { 
+        window._PAUSE_POSITION=state.position
+        console.log(state); 
+      });
 
       // Ready
       player.addListener('ready', ({ device_id }) => {
@@ -63,6 +67,7 @@
 
       // Connect to the player!
       player.connect();
+     }
     }
   </script>
     

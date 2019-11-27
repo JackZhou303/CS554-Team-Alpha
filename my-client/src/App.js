@@ -27,6 +27,7 @@ class App extends Component {
             <Route path="/" exact component={Container} />
             <Route path="/game" component={Container} />
           </div>
+          
         </div>
         
       </Router>

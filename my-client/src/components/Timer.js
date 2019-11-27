@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import {Link} from "react-router-dom";
 import Game from "./Game";
 
+
 export default class Timer extends Component {
     constructor(props) {
         super(props);
@@ -11,54 +12,21 @@ export default class Timer extends Component {
         apiResponse: ""
      }
     this.add_life_points = this.add_life_points.bind(this);
+    this.play = this.play.bind(this);
     //this.SDK = this.SDK.bind(this);
     }
-
-    // SDK(){
-    //     window.onSpotifyWebPlaybackSDKReady = () => {
-    //         const token = this.state.apiResponse;
-    //         const player = new Spotify.Player({
-    //           name: 'Web Playback SDK Quick Start Player',
-    //           getOAuthToken: cb => { cb(token); }
-    //         });
-          
-    //         // Error handling
-    //         player.addListener('initialization_error', ({ message }) => { console.error(message); });
-    //         player.addListener('authentication_error', ({ message }) => { console.error(message); });
-    //         player.addListener('account_error', ({ message }) => { console.error(message); });
-    //         player.addListener('playback_error', ({ message }) => { console.error(message); });
-          
-    //         // Playback status updates
-    //         player.addListener('player_state_changed', state => { console.log(state); });
-          
-    //         // Ready
-    //         player.addListener('ready', ({ device_id }) => {
-    //           console.log('Ready with Device ID', device_id);
-    //         });
-          
-    //         // Not Ready
-    //         player.addListener('not_ready', ({ device_id }) => {
-    //           console.log('Device ID has gone offline', device_id);
-    //         });
-          
-    //         // Connect to the player!
-    //         player.connect();
-    //       };
-    //    }
 
     callAPI() {
         fetch("http://localhost:3000/home")
             .then(res => res.json())
-            .then(res => 
-              this.setState({ apiResponse: res.token }))
+            .then(res => {
+              window._DEFAULT_DATA=res.token;
+            })
             .catch(err => err);
     }
 
     componentDidMount() {
-        // const script = document.createElement("script");
-        // script.async = true;
-        // script.src = "https://sdk.scdn.co/spotify-player.js";
-        // document.head.appendChild(script);
+
         this.callAPI();
         this.myInterval = setInterval(() => {
             const { seconds, minutes } = this.state
@@ -95,6 +63,20 @@ export default class Timer extends Component {
        }
     }
 
+    play() {
+        console.log(JSON.stringify(window._DEVICE_ID))
+        fetch('http://localhost:3000/play', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+            body:JSON.stringify({device: window._DEVICE_ID})
+        }).then((res) => res.json())
+        .then((data) =>  console.log(data))
+        .catch((err)=>   console.log(err))
+      }
+
     componentWillUnmount() {
         clearInterval(this.myInterval)
     }
@@ -109,9 +91,9 @@ export default class Timer extends Component {
                     : <h1>Time Remaining: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</h1>
                 }
                 <Game/>
-                <p className="App-intro">{this.state.apiResponse}</p>
-                <button className="add_life" onClick={this.add_life_points}>Add</button>
+                <button className="add_life" onClick={this.play}>Play Song</button>
                 {/* <button className="add_life" onClick={this.SDK}>Play</button> */}
+                
             </div>
             
         )

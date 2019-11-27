@@ -33,7 +33,9 @@
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
   <script>
     window.onSpotifyWebPlaybackSDKReady = () => {
-      const token = 'BQC4SwsDw3RGacWpgp2IPxnNngEx5ESV30Rtx2ULDcnP_9NdG3AfIltit42_RatyrPahUDqThM5KDtSvKXNoeB67PZwNd8GLkQNPYTGFDyyb849Ji6DlXzubaxoLhI0MSTe78HNEzcEVUPsRwTUTQFUCLtSc9aLPjHmFcDAVro1PV8vj5dA';
+      const data = window._DEFAULT_DATA;
+      const token = data;
+      console.log(token)
       const player = new Spotify.Player({
         name: 'Web Playback SDK Quick Start Player',
         getOAuthToken: cb => { cb(token); }
@@ -50,6 +52,7 @@
 
       // Ready
       player.addListener('ready', ({ device_id }) => {
+        window._DEVICE_ID=device_id;
         console.log('Ready with Device ID', device_id);
       });
 
@@ -60,8 +63,10 @@
 
       // Connect to the player!
       player.connect();
-    };
+    }
   </script>
+    
+    
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.

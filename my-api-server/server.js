@@ -27,6 +27,7 @@ let my_client_id = '3cc049e06d534a8b853a48d4792ac432';
 let redirect_uri= "http://localhost:3000/callback";
 //server side storage
 let token; //access token
+let album="spotify:album:5ht7ItJgpBH7W6vJ5BqpPr"
 
 app.get('/home', async (req, res) => {
     res.send({token: token})
@@ -34,10 +35,15 @@ app.get('/home', async (req, res) => {
 
 app.post('/play', async (req, res) => {
   console.log(req.body)
-  let device_id=req.body.device;
+
+  const{ device, position}=req.body;
+  const request_body={
+      "uris": ["spotify:track:7ce20yLkzuXXLUhzIDoZih"],
+     "position_ms": position
+      }
   let clientServerOptions = {
-    uri: "https://api.spotify.com/v1/me/player/play?device_id="+device_id,
-    body: "{\"context_uri\":\"spotify:album:5ht7ItJgpBH7W6vJ5BqpPr\",\"offset\":{\"position\":5},\"position_ms\":0}",
+    uri: "https://api.spotify.com/v1/me/player/play?device_id="+device,
+    body: JSON.stringify(request_body),
     method: 'PUT',
     headers: {
       "Accept": "application/json",
@@ -46,7 +52,49 @@ app.post('/play', async (req, res) => {
     }
 }
  request(clientServerOptions, function (error, response) {
-    console.log(error,response.body);
+    console.log(error, response.body);
+    return;
+});
+
+  res.send(req.body)
+});
+
+
+
+app.post('/pause', async (req, res) => {
+  console.log(req.body)
+  let device_id=req.body.device;
+  let clientServerOptions = {
+    uri: "https://api.spotify.com/v1/me/player/pause?device_id="+device_id,
+    method: 'PUT',
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Authorization": "Bearer "+ token
+    }
+}
+ request(clientServerOptions, function (error, response) {
+    console.log(error, response.body);
+    return;
+});
+
+  res.send(req.body)
+});
+
+app.post('/skip', async (req, res) => {
+  console.log(req.body)
+  let device_id=req.body.device;
+  let clientServerOptions = {
+    uri: "https://api.spotify.com/v1/me/player/next?device_id="+device_id,
+    method: 'POST',
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "Authorization": "Bearer "+ token
+    }
+}
+ request(clientServerOptions, function (error, response) {
+    console.log(error, response.body);
     return;
 });
 
@@ -85,7 +133,7 @@ app.get('/callback', async (req,res) => {
 
       spotifyApi.getUserPlaylists(user_id)
   .then(function(data) {
-    console.log('Retrieved playlists', data.body.items[0].external_urls);
+    console.log('Retrieved playlists', data.body.items);
   },function(err) {
     console.log('Something went wrong!', err);
     });

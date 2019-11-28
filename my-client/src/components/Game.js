@@ -13,11 +13,14 @@ export default class Game extends Component {
         device_ready: false,
         current_track: 0,
         total_tracks:0,
-        result: false
+        result: false,
+        value: " "
      }
     this.play = this.play.bind(this);
     this.skip = this.skip.bind(this);
     this.play_game= this.play_game.bind(this);
+    this.verify_answer= this.verify_answer.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     }
 
     callAPI() {
@@ -33,6 +36,7 @@ export default class Game extends Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
         this.callAPI();
         this.myInterval = setInterval(() => {
             if(window._DEVICE_ID){
@@ -46,6 +50,7 @@ export default class Game extends Component {
     }
 
     componentWillUnmount(){
+        this._isMounted = false;
         clearInterval(this.myInterval)
     }
 
@@ -78,7 +83,7 @@ export default class Game extends Component {
                         console.log("replay")
                         this.pause()
                         clearInterval(this.playInterval)
-                    } 
+                } 
             }, 1000)
             //console.log(data)
         })
@@ -119,6 +124,7 @@ export default class Game extends Component {
     }
     else {
         this.pause();
+        clearInterval(this.timeInterval)
         this.setState(() => ({
             isPlayin: false,
             result: true
@@ -178,8 +184,20 @@ export default class Game extends Component {
         }
     }
 
+       handleChange(event) {
+        this.setState({value: event.target.value});
+      }
+    
+      verify_answer(event) {
+        alert('A name was submitted: ' + this.state.value);
+        event.preventDefault();
+      }
+
+
     render() {
+        //html components
         let timer = null;
+        let input_box=null;
         const { minutes, seconds } = this.state
         timer = (
             <div>
@@ -191,16 +209,28 @@ export default class Game extends Component {
             </div>
         );
 
+        input_box=(
+                <div>
+                    <form onSubmit={this.verify_answer}>
+                    <input type="text" value={this.state.value} onChange={this.handleChange} />
+                    <input type="submit" value="Submit" />
+                    </form>
+                </div>
+
+        );
+        
+        //rendering logics
         if(minutes === 0 && seconds === 0){
             return timer
         }
         else if(this.state.result && !this.state.isPlayin ) {
-            return (<div>Game End</div>)
+            return (<div><h1>Game End</h1> <Link to={`/`}><button className="pageBtn" >Home</button></Link></div>)
         }   
         else if(this.state.device_ready && this.state.isPlayin ){
             return (
             <div>
                 {timer}
+                {input_box}
                 {this.state.isPaused ? <button className="game_btn" onClick={this.play}>Listen More</button>: ""}
                 <button className="game_btn" onClick={this.skip}>Skip Song</button>
             </div>

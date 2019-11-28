@@ -15,8 +15,7 @@ class App extends Component {
       <Router>
         <div className="App">
           <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
-            <h1 className="App-title">Welcome to the Pokemon API</h1>
+            <h1 className="App-title">Welcome to the Music Experts</h1>
           </header>
           <br />
           <div className="App-body">

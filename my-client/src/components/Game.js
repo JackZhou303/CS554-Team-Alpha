@@ -14,7 +14,8 @@ export default class Game extends Component {
         current_track: 0,
         total_tracks:0,
         result: false,
-        value: " "
+        value: " ",
+        points:0
      }
     this.play = this.play.bind(this);
     this.skip = this.skip.bind(this);
@@ -93,7 +94,7 @@ export default class Game extends Component {
 
     skip() {
 
-    if(this.state.current_track < this.state.total_tracks-1){
+     if(this.state.current_track < this.state.total_tracks-1){
         fetch('http://localhost:3000/skip', {
             method: 'POST',
             headers: {
@@ -104,9 +105,6 @@ export default class Game extends Component {
         }).then((res) => res.json())
         .then((data) => { 
             let seconds=10;
-            this.setState(() => ({
-                current_track: this.state.current_track+1
-            }))
             this.skipInterval = setInterval(() => {   
                 if (seconds > 0) {
                         seconds=seconds - 1
@@ -118,6 +116,9 @@ export default class Game extends Component {
                         clearInterval(this.skipInterval)
                     } 
             }, 1000)
+            this.setState(() => ({
+                current_track: this.state.current_track+1
+            }))
             //console.log(data)
         })
         .catch((err)=> console.log(err))
@@ -129,8 +130,7 @@ export default class Game extends Component {
             isPlayin: false,
             result: true
         }))
-    }
-
+      }
     }
 
     pause() {
@@ -189,8 +189,11 @@ export default class Game extends Component {
       }
     
       verify_answer(event) {
-        alert('A name was submitted: ' + this.state.value);
-        event.preventDefault();
+        console.log('A answer was submitted: ' + this.state.value);
+        if(this.state.value.includes("ch")) {
+            this.setState({points: this.state.points+1}, this.skip());
+        }
+        //event.preventDefault();
       }
 
 
@@ -201,19 +204,19 @@ export default class Game extends Component {
         const { minutes, seconds } = this.state
         timer = (
             <div>
+                <p>This is your life Bar</p>
             { minutes === 0 && seconds === 0
                         ? <div><h1>Busted!</h1> <Link to={`/`}><button className="pageBtn" >Home</button></Link></div>
                         : <h1>Time Remaining: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</h1>
             }
-            <p>This is your life Bar</p>
             </div>
         );
 
         input_box=(
                 <div>
-                    <form onSubmit={this.verify_answer}>
+                    <form>
                     <input type="text" value={this.state.value} onChange={this.handleChange} />
-                    <input type="submit" value="Submit" />
+                    <input onClick={this.verify_answer} type="button" value="Submit" />
                     </form>
                 </div>
 
@@ -224,11 +227,12 @@ export default class Game extends Component {
             return timer
         }
         else if(this.state.result && !this.state.isPlayin ) {
-            return (<div><h1>Game End</h1> <Link to={`/`}><button className="pageBtn" >Home</button></Link></div>)
+            return (<div><h1>Game End</h1> <h1>Final Points: {this.state.points}</h1><Link to={`/`}><button className="pageBtn" >Home</button></Link></div>)
         }   
         else if(this.state.device_ready && this.state.isPlayin ){
             return (
             <div>
+                <h1>Current Points: {this.state.points}</h1>
                 {timer}
                 {input_box}
                 {this.state.isPaused ? <button className="game_btn" onClick={this.play}>Listen More</button>: ""}

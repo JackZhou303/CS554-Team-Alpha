@@ -8,7 +8,6 @@ class Home extends Component {
     };
   }
 
-
   render() {
     let body = null;
     

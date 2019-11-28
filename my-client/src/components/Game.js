@@ -52,7 +52,7 @@ export default class Game extends Component {
 
     componentWillUnmount(){
         this._isMounted = false;
-        clearInterval(this.myInterval)
+        clearInterval(this.timeInterval)
     }
 
 
@@ -82,8 +82,8 @@ export default class Game extends Component {
                 
                 if (seconds === 0) {
                         console.log("replay")
-                        this.pause()
                         clearInterval(this.playInterval)
+                        this.pause()
                 } 
             }, 1000)
             //console.log(data)
@@ -112,8 +112,8 @@ export default class Game extends Component {
                 
                 if (seconds === 0) {
                         console.log("replay")
-                        this.pause()
                         clearInterval(this.skipInterval)
+                        this.pause()
                     } 
             }, 1000)
             this.setState(() => ({
@@ -184,17 +184,31 @@ export default class Game extends Component {
         }
     }
 
-       handleChange(event) {
+    handleChange(event) {
         this.setState({value: event.target.value});
       }
     
-      verify_answer(event) {
+    verify_answer(event) {
         console.log('A answer was submitted: ' + this.state.value);
-        if(this.state.value.includes("ch")) {
-            this.setState({points: this.state.points+1}, this.skip());
+        if(this._isMounted && this.state.value.includes("ch")) {
+            this.setState({points: this.state.points+1}, this.skip(), this.add_life_points());
         }
         //event.preventDefault();
       }
+
+    add_life_points() {
+        const { seconds, minutes } = this.state
+        if(seconds+20 > 60){
+            this.setState(({ minutes, seconds }) => ({
+                minutes: minutes + 1,
+                seconds: seconds + 20 - 60
+            }))
+        }else {
+        this.setState(({ seconds }) => ({
+            seconds: seconds + 20
+        }))
+       }
+    }
 
 
     render() {

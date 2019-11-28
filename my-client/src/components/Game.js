@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
-import Timer from "./Timer";
+import {Link} from "react-router-dom";
 
 
 export default class Game extends Component {
     constructor(props) {
         super(props);
     this.state = {
+        minutes: 1,
+        seconds: 0,
         isPlayin: false,
-        device_ready: false
+        isPaused: false,
+        device_ready: false,
+        current_track: 0,
+        total_tracks:0,
+        result: false
      }
     this.play = this.play.bind(this);
     this.skip = this.skip.bind(this);
@@ -19,6 +25,9 @@ export default class Game extends Component {
             .then(res => res.json())
             .then(res => {
               window._DEFAULT_DATA=res.token;
+              this.setState(() => ({
+                    total_tracks: 2
+                }), console.log("2"))
             })
             .catch(err => err);
     }
@@ -44,8 +53,8 @@ export default class Game extends Component {
     play() {
         //console.log(JSON.stringify(window._DEVICE_ID))
         let position
-        if(window._PAUSE_POSITION) position=window._PAUSE_POSITION;
-        else position=0
+        if(window._PAUSE_POSITION) position = window._PAUSE_POSITION;
+        else position = 0
         fetch('http://localhost:3000/play', {
             method: 'POST',
             headers: {
@@ -55,6 +64,9 @@ export default class Game extends Component {
             body:JSON.stringify({device: window._DEVICE_ID, position: position})
         }).then((res) => res.json())
         .then((data) => { 
+            this.setState(() => ({
+                isPaused: false
+            }))
             let seconds=10;
             this.playInterval = setInterval(() => {
                 
@@ -75,6 +87,8 @@ export default class Game extends Component {
 
 
     skip() {
+
+    if(this.state.current_track < this.state.total_tracks-1){
         fetch('http://localhost:3000/skip', {
             method: 'POST',
             headers: {
@@ -85,8 +99,10 @@ export default class Game extends Component {
         }).then((res) => res.json())
         .then((data) => { 
             let seconds=10;
-            this.skipInterval = setInterval(() => {
-                
+            this.setState(() => ({
+                current_track: this.state.current_track+1
+            }))
+            this.skipInterval = setInterval(() => {   
                 if (seconds > 0) {
                         seconds=seconds - 1
                     }
@@ -101,6 +117,15 @@ export default class Game extends Component {
         })
         .catch((err)=> console.log(err))
     }
+    else {
+        this.pause();
+        this.setState(() => ({
+            isPlayin: false,
+            result: true
+        }))
+    }
+
+    }
 
     pause() {
         fetch('http://localhost:3000/pause', {
@@ -112,30 +137,73 @@ export default class Game extends Component {
             body:JSON.stringify({device: window._DEVICE_ID})
         }).then((res) => res.json())
         .then((data) => { 
-            //console.log(data)
+            this.setState(() => ({
+                isPaused: true
+            }))
         })
         .catch((err)=> console.log(err))
     }
 
+    start_time(){
+        this.timeInterval = setInterval(() => {
+            const { seconds, minutes } = this.state
+    
+            if (seconds > 0) {
+                this.setState(({ seconds }) => ({
+                    seconds: seconds - 1
+                }))
+            }
+            if (seconds === 0) {
+                if (minutes === 0) {
+                    clearInterval(this.timeInterval)
+                } else {
+                    this.setState(({ minutes }) => ({
+                        minutes: minutes - 1,
+                        seconds: 59
+                    }))
+                }
+            } 
+        }, 1000)
+    }
+
+
     play_game(){
         if(!this.state.isPlayin){
             this.setState(() => ({
-                isPlayin: true
-            }), this.play())
+                isPlayin: true,
+                current_track: 0
+            }), 
+            this.play(), this.start_time()
+            )
         }
     }
 
     render() {
-        
-    if(this.state.device_ready && this.state.isPlayin ){
-        return (
+        let timer = null;
+        const { minutes, seconds } = this.state
+        timer = (
             <div>
-                <Timer/>
-                <button className="game_btn" onClick={this.play}>Play Song</button>
-                
+            { minutes === 0 && seconds === 0
+                        ? <div><h1>Busted!</h1> <Link to={`/`}><button className="pageBtn" >Home</button></Link></div>
+                        : <h1>Time Remaining: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</h1>
+            }
+            <p>This is your life Bar</p>
+            </div>
+        );
+
+        if(minutes === 0 && seconds === 0){
+            return timer
+        }
+        else if(this.state.result && !this.state.isPlayin ) {
+            return (<div>Game End</div>)
+        }   
+        else if(this.state.device_ready && this.state.isPlayin ){
+            return (
+            <div>
+                {timer}
+                {this.state.isPaused ? <button className="game_btn" onClick={this.play}>Listen More</button>: ""}
                 <button className="game_btn" onClick={this.skip}>Skip Song</button>
             </div>
-            
           )
         } else if(this.state.device_ready && !this.state.isPlayin ) {
             return <button className="add_life" onClick={this.play_game}>Play Game</button>

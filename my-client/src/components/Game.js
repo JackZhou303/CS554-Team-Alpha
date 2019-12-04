@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {Link} from "react-router-dom";
-
+import {Form,FormControl,InputGroup,Button} from 'react-bootstrap'
+import SignOutButton from './SignOut';
 
 export default class Game extends Component {
     constructor(props) {
@@ -232,6 +233,7 @@ export default class Game extends Component {
                     <input type="text" value={this.state.value} onChange={this.handleChange} />
                     <input onClick={this.verify_answer} type="button" value="Submit" />
                     </form>
+                    <SignOutButton/>
                 </div>
 
         );

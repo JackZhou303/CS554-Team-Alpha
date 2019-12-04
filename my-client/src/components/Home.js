@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-
+import { BrowserRouter as Router, Route,Link} from "react-router-dom";
 
 class Home extends Component {
   constructor(props) {
@@ -13,8 +13,7 @@ class Home extends Component {
     
       body = (
         <div>
-
-          <a href="http://localhost:3000/login">Login</a>
+          <Link to="/login">Home</Link>
           <p>Welcome, Click to Login </p>
         </div>
       );

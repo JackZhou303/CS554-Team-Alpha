@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Link} from "react-router-dom";
 import {Form,FormControl,InputGroup,Button, Jumbotron} from 'react-bootstrap'
 import SignOutButton from './SignOut';
+import { ServiceApi } from '../service';
 
 export default class Game extends Component {
     constructor(props) {
@@ -25,21 +26,16 @@ export default class Game extends Component {
     this.handleChange = this.handleChange.bind(this);
     }
 
-    callAPI() {
-        fetch("http://localhost:3000/home")
-            .then(res => res.json())
-            .then(res => {
-              window._DEFAULT_DATA=res.token;
-              this.setState(() => ({
-                    total_tracks: 2
-                }), console.log("2"))
-            })
-            .catch(err => err);
-    }
-
-    componentDidMount() {
+    async componentDidMount() {
         this._isMounted = true;
-        this.callAPI();
+        console.log("game is mounted")
+        const responseJson = await ServiceApi.get_token();
+        //console.log(responseJson)
+        window._DEFAULT_DATA = responseJson.token;
+        this.setState(() => ({
+            total_tracks: 2
+        }), console.log("2"))
+
         this.myInterval = setInterval(() => {
             if(window._DEVICE_ID){
                 this.setState(() => ({
@@ -48,29 +44,23 @@ export default class Game extends Component {
              console.log("Device is ready")
              clearInterval(this.myInterval)   
             }
-        }, 1000)
+        }, 500)
     }
 
     componentWillUnmount(){
         this._isMounted = false;
-        clearInterval(this.timeInterval)
+        clearInterval(this.playInterval);
+        clearInterval(this.timeInterval);
+        clearInterval(this.skipInterval);
     }
 
 
-    play() {
+    async play() {
         //console.log(JSON.stringify(window._DEVICE_ID))
-        let position
+        let position;
         if(window._PAUSE_POSITION) position = window._PAUSE_POSITION;
         else position = 0
-        fetch('http://localhost:3000/play', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-              },
-            body:JSON.stringify({device: window._DEVICE_ID, position: position})
-        }).then((res) => res.json())
-        .then((data) => { 
+        await ServiceApi.play_song(window._DEVICE_ID, position);
             this.setState(() => ({
                 isPaused: false
             }))
@@ -88,46 +78,29 @@ export default class Game extends Component {
                 } 
             }, 1000)
             //console.log(data)
-        })
-        .catch((err)=> console.log(err))
     }
 
 
-    skip() {
+    async skip() {
 
      if(this.state.current_track < this.state.total_tracks-1){
-        fetch('http://localhost:3000/skip', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-              },
-            body:JSON.stringify({device: window._DEVICE_ID})
-        }).then((res) => res.json())
-        .then((data) => { 
-            let seconds=10;
-            this.skipInterval = setInterval(() => {   
-                if (seconds > 0) {
-                        seconds=seconds - 1
-                    }
-                
-                if (seconds === 0) {
-                        console.log("skip replay")
-                        clearInterval(this.skipInterval)
-                        this.pause()
-                    } 
-            }, 1000)
-            this.setState(() => ({
-                current_track: this.state.current_track+1
-            }))
-            //console.log(data)
-        })
-        .catch((err)=> console.log(err))
+        await ServiceApi.skip_song(window._DEVICE_ID);
+        let seconds=10;
+        this.skipInterval = setInterval(() => {   
+            if (seconds > 0) {
+                seconds = seconds - 1
+                }
+            if (seconds === 0) {
+                console.log("skip replay")
+                clearInterval(this.skipInterval)
+                this.pause()
+                } 
+        }, 1000)
+        this.setState(() => ({
+            current_track: this.state.current_track + 1
+        }))
     }
     else {
-        clearInterval(this.playInterval)
-        clearInterval(this.timeInterval)
-        clearInterval(this.skipInterval)
         this.pause();
         this.setState(() => ({
             isPlayin: false,
@@ -136,21 +109,8 @@ export default class Game extends Component {
       }
     }
 
-    pause() {
-        fetch('http://localhost:3000/pause', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-              },
-            body:JSON.stringify({device: window._DEVICE_ID})
-        }).then((res) => res.json())
-        .then((data) => { 
-            this.setState(() => ({
-                isPaused: true
-            }))
-        })
-        .catch((err)=> console.log(err))
+    async pause() {
+        await ServiceApi.pause_song();
     }
 
     start_time(){
@@ -176,13 +136,13 @@ export default class Game extends Component {
     }
 
 
-    play_game(){
+    async play_game(){
         if(!this.state.isPlayin){
             this.setState(() => ({
                 isPlayin: true,
                 current_track: 0
             }), 
-            this.play(), this.start_time()
+            await this.play(), this.start_time()
             )
         }
     }
@@ -191,12 +151,11 @@ export default class Game extends Component {
         this.setState({value: event.target.value});
       }
     
-    verify_answer(event) {
+    async verify_answer(event) {
         console.log('A answer was submitted: ' + this.state.value);
         if(this._isMounted && this.state.value.includes("ch")) {
-            this.setState({points: this.state.points+1}, this.skip(), this.add_life_points());
+            this.setState({points: this.state.points+1}, await this.skip(), this.add_life_points());
         }
-        //event.preventDefault();
       }
 
     add_life_points() {
@@ -225,7 +184,6 @@ export default class Game extends Component {
             </div>
         )
         timer = (
-            <Jumbotron className="background-transparent">
             <div>
                 <p>This is your life Bar</p>
             { minutes === 0 && seconds === 0
@@ -233,18 +191,15 @@ export default class Game extends Component {
                         : <h1>Time Remaining: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</h1>
             }
             </div>
-            </Jumbotron>
         );
 
         input_box=(
-            <Jumbotron className="background-transparent">
                 <div>
                     <form>
                     <input type="text" value={this.state.value} onChange={this.handleChange} />
                     <input onClick={this.verify_answer} type="button" value="Submit" />
                     </form>
                 </div>
-            </Jumbotron>
 
         );
         
@@ -256,8 +211,8 @@ export default class Game extends Component {
             return (<Jumbotron className="background-transparent"><div><h1>Game End</h1> <h1>Final Points: {this.state.points}</h1><Link to={`/`}><button className="pageBtn" >Home</button></Link></div></Jumbotron>)
         }   
         else if(this.state.device_ready && this.state.isPlayin ){
-            return (
-                <Jumbotron className="background-transparent">
+            return ( 
+                <Jumbotron className="background-transparent">    
             <div>
                 {signout}
                 <h1>Current Points: {this.state.points}</h1>

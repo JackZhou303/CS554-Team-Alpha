@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import "./App.css";
-import Container from "./components/Container";
 import Signin from "./components/Signin";
 import SignUp from "./components/SignUp";
 import Game from "./components/Game";
@@ -12,26 +11,26 @@ import { BrowserRouter as Router, Route,Switch} from "react-router-dom";
 class App extends Component {
   constructor(props) {
       super(props);
-      this.state = { apiResponse: ""};
+      this.state = {};
   }
   
   render() {
     return (
       <Router>
         <Switch>
+            <React.Fragment>
         <div className="App">
-          <br />
+          <br/>
           <div className="App-body">
             <Route path="/" exact component={Home} />
             <Route path="/game" component={Game} />
             <Route path="/login" component={Login}/>
             <Route path="/signin" component={Signin}/>
             <Route path="/signup" component={SignUp}/>
-            <Route path="/dashboard" component={Dashboard}/>
+            <Route path="/home" component={Dashboard}/>
           </div>
-          
         </div>
-        
+           </React.Fragment>
         </Switch>
       </Router>
     );

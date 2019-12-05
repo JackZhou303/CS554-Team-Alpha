@@ -22,9 +22,9 @@ class Home extends Component {
             <Row><p></p></Row>
           </Container>
             <Jumbotron className="background-transparent">
-            <Bouncer><h1>Music Guesser</h1></Bouncer>
+            <Bouncer><h1>Music Experts</h1></Bouncer>
             <p>
-              Music Guesser is a fun to play app which deals with playing with music and trying to guess the correct song.
+              Music Experts is a fun to play app which deals with playing with music and trying to guess the correct song.
               You can see your song lists and your rank as well. 
             </p>
             <p>

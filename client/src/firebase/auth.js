@@ -1,4 +1,6 @@
+import React from 'react';
 import { auth, firebase } from "./firebase";
+import { BrowserRouter as Router, Route,Link,Redirect} from "react-router-dom";
 
 async function doCreateUserWithEmailAndPassword(email, password, displayName) {
   await auth.createUserWithEmailAndPassword(email, password);
@@ -30,6 +32,7 @@ async function doPasswordUpdate(password) {
 
 async function doSignOut() {
   await auth.signOut();
+  window.location.href="/login";
 }
 
 export {

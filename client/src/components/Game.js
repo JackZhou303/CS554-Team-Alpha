@@ -216,12 +216,16 @@ export default class Game extends Component {
 
     render() {
         //html components
-        let timer = null;
+        let timer = null,signout=null;
         let input_box=null;
         const { minutes, seconds } = this.state
+        signout = (
+            <div>
+                <SignOutButton></SignOutButton>
+            </div>
+        )
         timer = (
             <Jumbotron className="background-transparent">
-                <SignOutButton></SignOutButton>
             <div>
                 <p>This is your life Bar</p>
             { minutes === 0 && seconds === 0
@@ -255,6 +259,7 @@ export default class Game extends Component {
             return (
                 <Jumbotron className="background-transparent">
             <div>
+                {signout}
                 <h1>Current Points: {this.state.points}</h1>
                 {timer}
                 {input_box}

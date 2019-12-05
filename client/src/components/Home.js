@@ -1,14 +1,15 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route,Link} from "react-router-dom";
 import {Jumbotron,Button, Container,Row} from 'react-bootstrap';
-
+import {bounce} from "react-animations";
+import styled, {keyframes} from 'styled-components';
+const Bouncer=styled.div`animation: 3s ${keyframes`${bounce}`}infinte`;
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
     };
   }
-
   render() {
     let body = null;
     
@@ -21,7 +22,7 @@ class Home extends Component {
             <Row><p></p></Row>
           </Container>
             <Jumbotron className="background-transparent">
-            <h1>Music Guesser</h1>
+            <Bouncer><h1>Music Guesser</h1></Bouncer>
             <p>
               Music Guesser is a fun to play app which deals with playing with music and trying to guess the correct song.
               You can see your song lists and your rank as well. 

@@ -14,7 +14,7 @@ class Login extends Component {
   }
   checkAuthentication=()=>{
     if(firebase.isAuthenticated()){
-      return <Redirect to="/game"></Redirect>
+      return <Redirect to="/dashboard"></Redirect>
     }else{  
       return <Redirect to="/signin"></Redirect>
     }

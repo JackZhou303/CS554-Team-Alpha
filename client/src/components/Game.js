@@ -82,7 +82,7 @@ export default class Game extends Component {
                     }
                 
                 if (seconds === 0) {
-                        console.log("replay")
+                        console.log("play replay")
                         clearInterval(this.playInterval)
                         this.pause()
                 } 
@@ -112,7 +112,7 @@ export default class Game extends Component {
                     }
                 
                 if (seconds === 0) {
-                        console.log("replay")
+                        console.log("skip replay")
                         clearInterval(this.skipInterval)
                         this.pause()
                     } 
@@ -125,8 +125,10 @@ export default class Game extends Component {
         .catch((err)=> console.log(err))
     }
     else {
-        this.pause();
+        clearInterval(this.playInterval)
         clearInterval(this.timeInterval)
+        clearInterval(this.skipInterval)
+        this.pause();
         this.setState(() => ({
             isPlayin: false,
             result: true

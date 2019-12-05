@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { auth } from "../firebase";
-import {Form,InputGroup,FormControl} from 'react-bootstrap';
+import {Form,InputGroup,FormControl,Container,Jumbotron, Button} from 'react-bootstrap';
+import { remoteConfig } from "firebase";
 const INITIAL_STATE = {
   displayName: "",
   email: "",
@@ -88,6 +89,8 @@ class SignUp extends Component {
     return (
       <div>
         {error && <p className="error">{error}</p>}
+        <Container>
+        <Jumbotron>
         <Form onSubmit={this.onSubmit.bind(this)}>
           <Form.Label htmlFor="displayName">Name:</Form.Label>
           <InputGroup className="mb-3">
@@ -100,52 +103,43 @@ class SignUp extends Component {
               value={this.state.displayName}
             />
             </InputGroup>
-          <div className="form-group">
-            <input
-              type="text"
-              name="displayName"
-              onChange={this.handleChange}
-              value={this.state.displayName}
-            />
-          </div>
-
-          <label htmlFor="email">Email Address:</label>
-          <div className="form-group">
-            <input
+          <Form.Label htmlFor="email">Email Address:</Form.Label>
+          <InputGroup className="mb-3">
+            <FormControl
+              placeholder="email"
               autoComplete="email"
               type="email"
               name="email"
               onChange={this.handleChange}
               value={this.state.email}
             />
-          </div>
-
-          <label htmlFor="passwordOne">Password</label>
-          <div className="form-group">
-            <input
-              id="passwordOne"
-              autoComplete="new-password"
+            </InputGroup>
+          <Form.Label htmlFor="password">Password:</Form.Label>
+          <InputGroup className="mb-3">
+            <FormControl
+              placeholder="password"
+              autoComplete="password"
               type="password"
-              name="passwordOne"
+              name="password"
               onChange={this.handleChange}
-              value={this.state.passwordOne}
+              value={this.state.password}
             />
-          </div>
-
-          <label htmlFor="passwordTwo">Confirm Password:</label>
-          <div className="form-group">
-            <input
+            </InputGroup>
+            <Form.Label htmlFor="passwordTwo">Confirm Password</Form.Label>
+            <InputGroup className="mb-3">
+            <FormControl
+              placeholder="confirm password"
               autoComplete="new-password"
               type="password"
               name="passwordTwo"
               onChange={this.handleChange}
               value={this.state.passwordTwo}
             />
-          </div>
+            </InputGroup>
           <div className="form-group">
-            <button type="submit" disabled={isInvalid}>
+            <Button type="submit" variant="primary" disabled={isInvalid}>
               Submit
-            </button>
+            </Button>
           </div>
         </Form>
 
@@ -154,6 +148,8 @@ class SignUp extends Component {
           alt="google signin"
           src="../img/btn_google_signin.png"
         />
+        </Jumbotron>
+        </Container>
       </div>
     );
   }

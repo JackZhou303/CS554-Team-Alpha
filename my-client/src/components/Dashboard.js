@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route,Link} from "react-router-dom";
+import { Container,Jumbotron } from "react-bootstrap";
 
 class Dashboard extends Component {
   constructor(props) {
@@ -12,10 +13,13 @@ class Dashboard extends Component {
     let body = null;
     
       body = (
-        <div>
-          <a href="http://localhost:3000/login">To Play Click here</a>
-          <p>Welcome, Click to Login </p>
-        </div>
+        <Container>
+            <Jumbotron className="background-transparent">
+            <h1>Welcome to the Dashboard</h1>
+            <p>To begin start by clicking the play icon below</p>
+            <a href="http://localhost:3000/login"><img src="../img/playicon.png"></img></a>
+          </Jumbotron>
+        </Container>
       );
     
     return body;

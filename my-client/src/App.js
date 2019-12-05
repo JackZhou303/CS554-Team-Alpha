@@ -20,9 +20,6 @@ class App extends Component {
       <Router>
         <Switch>
         <div className="App">
-          <header className="App-header">
-            <h1 className="App-title">Welcome to the Music Experts</h1>
-          </header>
           <br />
           <div className="App-body">
             <Route path="/" exact component={Home} />

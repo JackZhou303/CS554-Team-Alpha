@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {Form,FormControl,InputGroup,Button} from 'react-bootstrap';
+import {Form,FormControl,InputGroup,Button,Jumbotron, Container} from 'react-bootstrap';
 import ReactDOM from 'react-dom';
 import { auth } from "../firebase";
 
@@ -64,6 +64,8 @@ class SignIn extends Component {
     return (
       <div>
         {error && <p className="error">{error}</p>}
+        <Container>
+          <Jumbotron>
         <Form onSubmit={this.onSubmit.bind(this)}>
           <Form.Label htmlFor="email">Email Address:</Form.Label>
             <InputGroup className="mb-3">
@@ -100,6 +102,8 @@ class SignIn extends Component {
           alt="google signin"
           src="../img/btn_google_signin.png"
         />
+        </Jumbotron>
+      </Container>
       </div>
     );
   }

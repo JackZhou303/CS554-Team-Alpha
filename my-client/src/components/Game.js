@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {Link} from "react-router-dom";
-import {Form,FormControl,InputGroup,Button} from 'react-bootstrap'
+import {Form,FormControl,InputGroup,Button, Jumbotron} from 'react-bootstrap'
 import SignOutButton from './SignOut';
 
 export default class Game extends Component {
@@ -218,6 +218,8 @@ export default class Game extends Component {
         let input_box=null;
         const { minutes, seconds } = this.state
         timer = (
+            <Jumbotron className="background-transparent">
+                <SignOutButton></SignOutButton>
             <div>
                 <p>This is your life Bar</p>
             { minutes === 0 && seconds === 0
@@ -225,15 +227,18 @@ export default class Game extends Component {
                         : <h1>Time Remaining: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</h1>
             }
             </div>
+            </Jumbotron>
         );
 
         input_box=(
+            <Jumbotron className="background-transparent">
                 <div>
                     <form>
                     <input type="text" value={this.state.value} onChange={this.handleChange} />
                     <input onClick={this.verify_answer} type="button" value="Submit" />
                     </form>
                 </div>
+            </Jumbotron>
 
         );
         
@@ -242,10 +247,11 @@ export default class Game extends Component {
             return timer
         }
         else if(this.state.result && !this.state.isPlayin ) {
-            return (<div><h1>Game End</h1> <h1>Final Points: {this.state.points}</h1><Link to={`/`}><button className="pageBtn" >Home</button></Link></div>)
+            return (<Jumbotron className="background-transparent"><div><h1>Game End</h1> <h1>Final Points: {this.state.points}</h1><Link to={`/`}><button className="pageBtn" >Home</button></Link></div></Jumbotron>)
         }   
         else if(this.state.device_ready && this.state.isPlayin ){
             return (
+                <Jumbotron className="background-transparent">
             <div>
                 <h1>Current Points: {this.state.points}</h1>
                 {timer}
@@ -253,10 +259,11 @@ export default class Game extends Component {
                 {this.state.isPaused ? <button className="game_btn" onClick={this.play}>Listen More</button>: ""}
                 <button className="game_btn" onClick={this.skip}>Skip Song</button>
             </div>
+            </Jumbotron>
           )
         } else if(this.state.device_ready && !this.state.isPlayin ) {
-            return <button className="add_life" onClick={this.play_game}>Play Game</button>
+            return <Jumbotron className="background-transparent"><button className="add_life" onClick={this.play_game}>Play Game</button></Jumbotron>
         }   
-        else return <div>Loading...</div>
+        else return <Jumbotron className="background-transparent"><div>Loading...</div></Jumbotron>
     }
 }

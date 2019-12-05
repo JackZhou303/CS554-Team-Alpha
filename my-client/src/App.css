@@ -1,12 +1,21 @@
 .App {
   text-align: center;
+  background: url("/img/theme2.png");
+  min-height: 100vh;
 }
 
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
   height: 80px;
 }
-
+.background-transparent{
+  background-color: #eaefe996;
+}
+.centered {
+  position: fixed; /* or absolute */
+  top: 50%;
+  left: 50%;
+}
 .App-header {
   background-color: #1e8678;
   height: 45px;

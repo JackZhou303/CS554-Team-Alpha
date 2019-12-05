@@ -26,7 +26,7 @@ class SignIn extends Component {
     try {
       await auth.doSignInWithEmailAndPassword(email, password);
       this.setState({ ...INITIAL_STATE });
-      this.props.history.push("/game");
+      this.props.history.push("/dashboard");
     } catch (e) {
       console.log(e.code);
       switch (e.code) {
@@ -89,7 +89,7 @@ class SignIn extends Component {
               />
               </InputGroup>
           <InputGroup className="mb-3">
-              <Button type="submit" variant="outline-secondary" disabled={isInvalid}>Button</Button>
+              <Button type="submit" variant="outline-secondary" disabled={isInvalid}>Login</Button>
           </InputGroup>
           Not Registered yet? <Link to="/signup"> Click here to Register</Link>
         </Form>

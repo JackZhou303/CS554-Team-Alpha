@@ -233,7 +233,6 @@ export default class Game extends Component {
                     <input type="text" value={this.state.value} onChange={this.handleChange} />
                     <input onClick={this.verify_answer} type="button" value="Submit" />
                     </form>
-                    <SignOutButton/>
                 </div>
 
         );

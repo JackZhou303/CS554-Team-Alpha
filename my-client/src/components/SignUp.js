@@ -36,7 +36,7 @@ class SignUp extends Component {
         displayName
       );
       this.setState({ ...INITIAL_STATE });
-      this.props.history.push("/game");
+      this.props.history.push("/dashboard");
     } catch (e) {
       console.log(e.code);
       switch (e.code) {

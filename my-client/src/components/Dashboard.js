@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route,Link} from "react-router-dom";
 
-class Home extends Component {
+class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -13,7 +13,7 @@ class Home extends Component {
     
       body = (
         <div>
-          <Link to="/login">Login with our App</Link>
+          <a href="http://localhost:3000/login">To Play Click here</a>
           <p>Welcome, Click to Login </p>
         </div>
       );
@@ -22,4 +22,4 @@ class Home extends Component {
   }
 }
 
-export default Home;
+export default Dashboard;

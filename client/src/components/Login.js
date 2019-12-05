@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import "../App.css";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import { firebase } from "../firebase";
-import Container from "./Container";
 import SignIn from "./Signin";  
 class Login extends Component {
   constructor(props) {
@@ -14,7 +13,7 @@ class Login extends Component {
   }
   checkAuthentication=()=>{
     if(firebase.isAuthenticated()){
-      return <Redirect to="/dashboard"></Redirect>
+      return <Redirect to="/home"></Redirect>
     }else{  
       return <Redirect to="/signin"></Redirect>
     }

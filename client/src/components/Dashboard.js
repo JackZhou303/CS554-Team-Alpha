@@ -17,7 +17,7 @@ class Dashboard extends Component {
             <Jumbotron className="background-transparent">
             <h1>Welcome to the Dashboard</h1>
             <p>To begin start by clicking the play icon below</p>
-            <a href="http://localhost:3000/login"><img src="../img/playicon.png"></img></a>
+            <a href="/game">Start Game</a>
           </Jumbotron>
         </Container>
       );

@@ -65,7 +65,7 @@ export default class Game extends Component {
                 isPaused: false
             }))
             let seconds=10;
-            this.playInterval = setInterval(() => {
+            this.playInterval = setInterval(async () => {
                 
                 if (seconds > 0) {
                         seconds=seconds - 1
@@ -74,7 +74,7 @@ export default class Game extends Component {
                 if (seconds === 0) {
                         console.log("play replay")
                         clearInterval(this.playInterval)
-                        this.pause()
+                        await this.pause()
                 } 
             }, 1000)
             //console.log(data)
@@ -83,17 +83,17 @@ export default class Game extends Component {
 
     async skip() {
 
-     if(this.state.current_track < this.state.total_tracks-1){
+     if(this.state.current_track < this.state.total_tracks - 1){
         await ServiceApi.skip_song(window._DEVICE_ID);
         let seconds=10;
-        this.skipInterval = setInterval(() => {   
+        this.skipInterval = setInterval(async () => {   
             if (seconds > 0) {
                 seconds = seconds - 1
                 }
             if (seconds === 0) {
                 console.log("skip replay")
                 clearInterval(this.skipInterval)
-                this.pause()
+                await this.pause()
                 } 
         }, 1000)
         this.setState(() => ({
@@ -101,7 +101,7 @@ export default class Game extends Component {
         }))
     }
     else {
-        this.pause();
+        await this.pause();
         this.setState(() => ({
             isPlayin: false,
             result: true
@@ -110,7 +110,7 @@ export default class Game extends Component {
     }
 
     async pause() {
-        await ServiceApi.pause_song();
+        await ServiceApi.pause_song(window._DEVICE_ID);
     }
 
     start_time(){

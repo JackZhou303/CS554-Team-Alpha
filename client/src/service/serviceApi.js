@@ -31,7 +31,7 @@ export default class ServiceApi {
 
     static async pause_song(device_id){
         try {
-            fetch('http://localhost:3000/api/game-control/pause', {
+            await fetch('http://localhost:3000/api/game-control/pause', {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
@@ -46,7 +46,6 @@ export default class ServiceApi {
 
     static async skip_song(device_id){
         try {
-            
             await fetch('http://localhost:3000/api/game-control/skip', {
                     method: 'POST',
                     headers: {

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { auth } from "../firebase";
 import {Form,InputGroup,FormControl,Container,Jumbotron, Button} from 'react-bootstrap';
+import { BrowserRouter as Router, Route,Link} from "react-router-dom";
 import { remoteConfig } from "firebase";
 const INITIAL_STATE = {
   displayName: "",
@@ -134,12 +135,19 @@ class SignUp extends Component {
               Submit
             </Button>
           </div>
+          <div className="form-group">
+            <Link to="/signin">
+            <Button type="button" variant="primary">
+              SignIn
+            </Button>
+            </Link>
+          </div>
         </Form>
 
         <img
           onClick={() => this.socialSignOn("google")}
           alt="google signin"
-          src="../img/btn_google_signin.png"
+          src="img/btn_google_signin.png"
         />
         </Jumbotron>
         </Container>

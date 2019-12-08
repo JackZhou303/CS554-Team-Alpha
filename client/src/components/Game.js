@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 import {Form,FormControl,InputGroup,Button, Jumbotron} from 'react-bootstrap'
 import SignOutButton from './SignOut';
 import { ServiceApi } from '../service';
+import { firebase } from "../firebase";
 
 export default class Game extends Component {
     constructor(props) {
@@ -15,26 +16,26 @@ export default class Game extends Component {
         device_ready: false,
         current_track: 0,
         total_tracks:0,
+        answers:[],
+        try_again: false,
         result: false,
         value: " ",
+        genre_value:" ",
         points:0
      }
     this.play = this.play.bind(this);
     this.skip = this.skip.bind(this);
     this.play_game= this.play_game.bind(this);
     this.verify_answer= this.verify_answer.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.handle_answer = this.handle_answer.bind(this);
+    this.handle_toggle_genre = this.handle_toggle_genre.bind(this);
     }
 
     async componentDidMount() {
         this._isMounted = true;
         console.log("game is mounted")
         const responseJson = await ServiceApi.get_token();
-        //console.log(responseJson)
         window._DEFAULT_DATA = responseJson.token;
-        this.setState(() => ({
-            total_tracks: 2
-        }), console.log("2"))
 
         this.myInterval = setInterval(() => {
             if(window._DEVICE_ID){
@@ -47,7 +48,7 @@ export default class Game extends Component {
         }, 500)
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         this._isMounted = false;
         clearInterval(this.playInterval);
         clearInterval(this.timeInterval);
@@ -60,41 +61,43 @@ export default class Game extends Component {
         let position;
         if(window._PAUSE_POSITION) position = window._PAUSE_POSITION;
         else position = 0
-        await ServiceApi.play_song(window._DEVICE_ID, position);
-            this.setState(() => ({
+        await ServiceApi.play_song(window._DEVICE_ID, position, this.state.current_track, this.state.genre_value);
+        this.setState(() => ({
                 isPaused: false
             }))
-            let seconds=10;
+            let seconds = 10;
             this.playInterval = setInterval(async () => {
                 
                 if (seconds > 0) {
-                        seconds=seconds - 1
-                    }
-                
+                    seconds = seconds - 1
+                }
                 if (seconds === 0) {
                         console.log("play replay")
                         clearInterval(this.playInterval)
                         await this.pause()
                 } 
             }, 1000)
-            //console.log(data)
     }
 
 
     async skip() {
 
      if(this.state.current_track < this.state.total_tracks - 1){
+        this.setState(() => ({
+            isPaused: false
+        }))
         await ServiceApi.skip_song(window._DEVICE_ID);
-        let seconds=10;
-        this.skipInterval = setInterval(async () => {   
+        let seconds = 10;
+        clearInterval(this.skipInterval)
+        this.skipInterval = setInterval( async () => {   
             if (seconds > 0) {
                 seconds = seconds - 1
-                }
+            }
             if (seconds === 0) {
                 console.log("skip replay")
                 clearInterval(this.skipInterval)
                 await this.pause()
-                } 
+            } 
         }, 1000)
         this.setState(() => ({
             current_track: this.state.current_track + 1
@@ -111,10 +114,13 @@ export default class Game extends Component {
 
     async pause() {
         await ServiceApi.pause_song(window._DEVICE_ID);
+        this.setState(() => ({
+            isPaused: true
+        }))
     }
 
-    start_time(){
-        this.timeInterval = setInterval(() => {
+    start_time() {
+        this.timeInterval = setInterval(async () => {
             const { seconds, minutes } = this.state
     
             if (seconds > 0) {
@@ -124,7 +130,10 @@ export default class Game extends Component {
             }
             if (seconds === 0) {
                 if (minutes === 0) {
-                    clearInterval(this.timeInterval)
+                    await this.pause();
+                    clearInterval(this.timeInterval);
+                    clearInterval(this.playInterval);
+                    clearInterval(this.skipInterval);
                 } else {
                     this.setState(({ minutes }) => ({
                         minutes: minutes - 1,
@@ -135,32 +144,64 @@ export default class Game extends Component {
         }, 1000)
     }
 
+    async get_tracks_and_play(){
 
-    async play_game(){
-        if(!this.state.isPlayin){
+        await this.play();
+
+        const total_tracks= await ServiceApi.get_total_tracks();
+        const answers= await ServiceApi.get_answers();
+        this.setState(() => ({
+            total_tracks: total_tracks.total,
+            answers: answers.answers
+        }), console.log(this.state.answers))
+
+    }
+
+    async play_game() {
+        if(this.state.genre_value !== " " && this.state.genre_value !== "Choose a Genre" ) {
+        if(! this.state.isPlayin){
+            console.log("paly_game")
             this.setState(() => ({
                 isPlayin: true,
                 current_track: 0
             }), 
-            await this.play(), this.start_time()
-            )
+            await this.get_tracks_and_play(), this.start_time()
+          )
+        }
+      }
+    }
+
+    handle_answer (event) {
+        this.setState({value: event.target.value.trim()});
+    }
+
+    handle_toggle_genre (event) {
+        console.log(event.target.value)
+        this.setState({genre_value: event.target.value});
+    }
+    
+    async verify_answer (event) {
+        console.log('An answer was submitted: ' + this.state.value);
+        const current_answer=this.state.answers[this.state.current_track]
+        console.log("right answer: "+ current_answer)
+        if(this._isMounted && this.state.value=== current_answer) {
+
+            this.setState({
+                points: this.state.points + 1,
+                try_again: false
+            }, await this.skip(), this.add_life_points());
+        }
+        else {
+            this.setState({
+                try_again: true
+            });
+
         }
     }
 
-    handleChange(event) {
-        this.setState({value: event.target.value});
-      }
-    
-    async verify_answer(event) {
-        console.log('A answer was submitted: ' + this.state.value);
-        if(this._isMounted && this.state.value.includes("ch")) {
-            this.setState({points: this.state.points+1}, await this.skip(), this.add_life_points());
-        }
-      }
-
-    add_life_points() {
-        const { seconds, minutes } = this.state
-        if(seconds+20 > 60){
+    add_life_points () {
+        const { seconds, minutes} = this.state
+        if(seconds+20 > 60) {
             this.setState(({ minutes, seconds }) => ({
                 minutes: minutes + 1,
                 seconds: seconds + 20 - 60
@@ -196,21 +237,22 @@ export default class Game extends Component {
         input_box=(
                 <div>
                     <form>
-                    <input type="text" value={this.state.value} onChange={this.handleChange} />
-                    <input onClick={this.verify_answer} type="button" value="Submit" />
+                        {this.state.try_again? <p>Try Again!</p>: " "}
+                        <input type="text" value={this.state.value} onChange={this.handle_answer} />
+                        <input onClick={this.verify_answer} type="button" value="Submit" />
+
                     </form>
                 </div>
 
         );
-        
-        //rendering logics
+
         if(minutes === 0 && seconds === 0){
-            return timer
+            return <Jumbotron className="background-transparent">  {timer} </Jumbotron>
         }
         else if(this.state.result && !this.state.isPlayin ) {
             return (<Jumbotron className="background-transparent"><div><h1>Game End</h1> <h1>Final Points: {this.state.points}</h1><Link to={`/`}><button className="pageBtn" >Home</button></Link></div></Jumbotron>)
         }   
-        else if(this.state.device_ready && this.state.isPlayin ){
+        else if(this.state.device_ready && this.state.isPlayin ) {
             return ( 
                 <Jumbotron className="background-transparent">    
             <div>
@@ -218,13 +260,26 @@ export default class Game extends Component {
                 <h1>Current Points: {this.state.points}</h1>
                 {timer}
                 {input_box}
-                {this.state.isPaused ? <button className="game_btn" onClick={this.play}>Listen More</button>: ""}
-                <button className="game_btn" onClick={this.skip}>Skip Song</button>
+                {this.state.isPaused ? <button className="game_btn" onClick={this.play}>Listen More</button> : ""}
+                {this.state.isPaused ?<button className="game_btn" onClick={this.skip}>Skip Song</button> : ""}
             </div>
             </Jumbotron>
           )
         } else if(this.state.device_ready && !this.state.isPlayin ) {
-            return <Jumbotron className="background-transparent"><button className="add_life" onClick={this.play_game}>Play Game</button></Jumbotron>
+            return (<Jumbotron className="background-transparent">
+                <div>
+                    <select className="genre_input" onChange={this.handle_toggle_genre}>
+                        <option value= "Choose a Genre"> Choose a Genre </option>
+                        <option value= "Demo1"> Demo1 </option>
+                        <option value= "Demo2"> Demo2 </option>
+                        <option value= "Demo3"> Demo3 </option>
+                    </select>
+                    <br/>
+                    <button className="play_game" onClick={this.play_game}>
+                    Play Game   
+                    </button>
+                </div>
+                </Jumbotron>)
         }   
         else return <Jumbotron className="background-transparent"><div>Loading...</div></Jumbotron>
     }

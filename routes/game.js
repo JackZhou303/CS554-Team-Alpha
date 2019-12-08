@@ -8,27 +8,91 @@ let scopes = ['streaming','user-read-private', 'user-read-email','playlist-read-
 let spotifyApi = new SpotifyWebApi({
     clientId: '3cc049e06d534a8b853a48d4792ac432',
     clientSecret: '697ff37969b04b41bfa1ea60de4a0038',
-    redirectUri: "http://localhost:3000/api/game-control/callback",
+    redirectUri: "http://localhost:4000/api/game-control/callback",
 })
 
 
 let my_client_id = '3cc049e06d534a8b853a48d4792ac432';
-let redirect_uri= "http://localhost:3000/api/game-control/callback";
+let redirect_uri= "http://localhost:4000/api/game-control/callback";
 //server side storage
 let token; //access token
 let album="spotify:album:5ht7ItJgpBH7W6vJ5BqpPr"
+let user_id, total_tracks, answers;
+
+
+async function get_tracks(genre){
+  let playlist_id;
+  // Get user id
+  if(!user_id){
+    try {
+      let data = await spotifyApi.getMe();
+      user_id= data.body.id;
+      //console.log(user_id)
+    } catch (err) {
+      console.log('Something went wrong!', err); 
+    }
+  }
+
+  // Get user playlist id
+  try { 
+    let data = await spotifyApi.getUserPlaylists(user_id);
+    let items =data.body.items;
+    //console.log(items);
+    let playlist= items.find(item => item.name === genre)
+    //console.log(playlist);
+     playlist_id=playlist.id
+    console.log('User picked playlist ', playlist_id);
+  } catch (err) {
+     console.log('Something went wrong!', err); 
+  }
+
+  try {
+    let data= await spotifyApi.getPlaylist(playlist_id);
+    let items= data.body.tracks.items;
+    let tracks=items.map(a => a.track.uri);
+    let track_names=items.map(a => a.track.name);
+    total_tracks=tracks.length;
+    answers=track_names;
+
+    console.log('List of track id', tracks);
+    console.log('List of answers', track_names);
+    return tracks;
+
+  } catch (err) {
+    console.log('Something went wrong!', err);  
+  }
+  
+}
 
 router.get('/token', async (req, res) => {
     res.send({token: token})
 });
 
-router.post('/play', async (req, res) => {
+router.get('/total_tracks', async (req, res) => {
+  res.send({total: total_tracks})
+});
 
-  const{ device, position}=req.body;
+router.get('/answers', async (req, res) => {
+  res.send({answers: answers})
+});
+
+router.get('/refresh-token', async (req, res) => {
+  res.send({token: token})
+});
+
+router.post('/play', async (req, res) => {
+  const{ device, position, offset, genre}=req.body;
+  console.log(genre);
+
+  const tracks= await get_tracks(genre);
+  
+
   const request_body={
-      "uris": ["spotify:track:7ce20yLkzuXXLUhzIDoZih", "spotify:track:5bvnqVuq7UFl0txSlHpsfS"],
-     "position_ms": position
-      }
+    "uris": tracks,
+    "offset": {"position": offset},
+    "position_ms": position
+    }
+
   let requestOptions = {
     uri: "https://api.spotify.com/v1/me/player/play?device_id="+device,
     body: JSON.stringify(request_body),
@@ -114,43 +178,12 @@ router.get('/callback', async (req,res) => {
       spotifyApi.setAccessToken(access_token);
       spotifyApi.setRefreshToken(refresh_token);
 
-  //   spotifyApi.getPlaylist('646INfOSOFxj47tJszYnWV')
-  // .then(function(data) {
-  //   console.log('Some information about this playlist', data.body.tracks.items);
-  // }, function(err) {
-  //   console.log('Something went wrong!', err);
-  // });
-
       token=access_token;
-      res.redirect("http://localhost:3000/api/game-control/token")
+      res.redirect("http://localhost:4000/api/game-control/token")
     } catch(err) {
       res.redirect('/#/error/invalid token');
     }
   });
 
-  router.get('/tracks', async (req,res) => {
-
-    let user_id;
-    let playlist=[]
-
-    spotifyApi.getMe()
-    .then(function(data) {
-      //console.log('Some information about the authenticated user', data.body);
-      user_id=data.body.id
-    }, function(err) {
-      console.log('Something went wrong!', err);
-    });
-
-    spotifyApi.getUserPlaylists(user_id)
-   .then(function(data) {
-     let items=data.body.items
-     for(let i in items){
-       playlist.push(items[i].id)
-     }
-  console.log('Retrieved playlists', playlist);
-  },function(err) {
-  console.log('Something went wrong!', err);
-  });
-  });
 
   module.exports = router;

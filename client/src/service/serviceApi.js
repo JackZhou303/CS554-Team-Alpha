@@ -32,7 +32,7 @@ export default class ServiceApi {
         }
     }
     
-    static async play_song(device_id, position, offset, genre){
+    static async play_song(device_id, position, offset, genre, signal){
         try {
             await fetch('http://localhost:4000/api/game-control/play', {
                     method: 'POST',
@@ -44,7 +44,8 @@ export default class ServiceApi {
                         device: device_id, 
                         position: position,
                         offset: offset,
-                        genre: genre
+                        genre: genre,
+                        signal: signal
                     })
                 })
             

@@ -56,12 +56,13 @@ export default class Game extends Component {
     }
 
 
-    async play() {
+    async play(flag) {
         //console.log(JSON.stringify(window._DEVICE_ID))
-        let position;
+        let position, signal;
+        if(!flag) signal = false
         if(window._PAUSE_POSITION) position = window._PAUSE_POSITION;
         else position = 0
-        await ServiceApi.play_song(window._DEVICE_ID, position, this.state.current_track, this.state.genre_value);
+        await ServiceApi.play_song(window._DEVICE_ID, position, this.state.current_track, this.state.genre_value, signal );
         this.setState(() => ({
                 isPaused: false
             }))
@@ -146,7 +147,7 @@ export default class Game extends Component {
 
     async get_tracks_and_play(){
 
-        await this.play();
+        await this.play(true);
 
         const total_tracks= await ServiceApi.get_total_tracks();
         const answers= await ServiceApi.get_answers();
@@ -180,21 +181,25 @@ export default class Game extends Component {
         this.setState({genre_value: event.target.value});
     }
     
+    reset_form(){
+        this.setState({value: " "});
+    }
+
     async verify_answer (event) {
         console.log('An answer was submitted: ' + this.state.value);
         const current_answer=this.state.answers[this.state.current_track]
         console.log("right answer: "+ current_answer)
+        
         if(this._isMounted && this.state.value=== current_answer) {
-
             this.setState({
                 points: this.state.points + 1,
                 try_again: false
-            }, await this.skip(), this.add_life_points());
+            }, await this.skip(), this.add_life_points(), this.reset_form());
         }
         else {
             this.setState({
                 try_again: true
-            });
+            }, this.reset_form());
 
         }
     }
@@ -226,19 +231,18 @@ export default class Game extends Component {
         )
         timer = (
             <div>
-                <p>This is your life Bar</p>
             { minutes === 0 && seconds === 0
-                        ? <div><h1>Busted!</h1> <Link to={`/`}><button className="pageBtn" >Home</button></Link></div>
-                        : <h1>Time Remaining: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</h1>
+                        ? <div><h1>Game End</h1> <h1>Final Points: {this.state.points}</h1><Link to={`/`}><button className="pageBtn" >Home</button></Link></div>
+                        : <div><p>This is your life Bar</p><h1>Time Remaining: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</h1></div>
             }
             </div>
         );
 
-        input_box=(
+        input_box = (
                 <div>
                     <form>
                         {this.state.try_again? <p>Try Again!</p>: " "}
-                        <input type="text" value={this.state.value} onChange={this.handle_answer} />
+                        <input id="answer-form" type="text" value={this.state.value} onChange={this.handle_answer} />
                         <input onClick={this.verify_answer} type="button" value="Submit" />
 
                     </form>

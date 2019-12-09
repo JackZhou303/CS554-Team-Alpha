@@ -15,9 +15,7 @@ let spotifyApi = new SpotifyWebApi({
 let my_client_id = '3cc049e06d534a8b853a48d4792ac432';
 let redirect_uri= "http://localhost:4000/api/game-control/callback";
 //server side storage
-let token; //access token
-let album="spotify:album:5ht7ItJgpBH7W6vJ5BqpPr"
-let user_id, total_tracks, answers;
+let token, tracks, user_id, total_tracks, answers;
 
 
 async function get_tracks(genre){
@@ -51,9 +49,22 @@ async function get_tracks(genre){
     let items= data.body.tracks.items;
     let tracks=items.map(a => a.track.uri);
     let track_names=items.map(a => a.track.name);
+    //randomize play list
     total_tracks=tracks.length;
-    answers=track_names;
 
+    for(let i = tracks.length -1; i > 0; i--){
+      const j = Math.floor(Math.random() * i)
+
+      const temp = tracks[i]
+      tracks[i] = tracks[j]
+      tracks[j] = temp
+
+      const temp2 = track_names[i]
+      track_names[i] = track_names[j]
+      track_names[j] = temp2
+    }
+
+    answers = track_names;
     console.log('List of track id', tracks);
     console.log('List of answers', track_names);
     return tracks;
@@ -81,11 +92,12 @@ router.get('/refresh-token', async (req, res) => {
 });
 
 router.post('/play', async (req, res) => {
-  const{ device, position, offset, genre}=req.body;
+  const{ device, position, offset, genre, signal}=req.body;
   console.log(genre);
 
-  const tracks= await get_tracks(genre);
-  
+  if(signal){
+    tracks = await get_tracks(genre);
+  }
 
   const request_body={
     "uris": tracks,

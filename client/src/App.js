@@ -27,7 +27,7 @@ class App extends Component {
             <Route path="/login" component={Login}/>
             <Route path="/signin" component={Signin}/>
             <Route path="/signup" component={SignUp}/>
-            <Route path="/home" component={Dashboard}/>
+            <Route path="/dashboard" component={Dashboard}/>
           </div>
         </div>
            </React.Fragment>

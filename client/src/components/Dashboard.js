@@ -11,7 +11,6 @@ class Dashboard extends Component {
 
   render() {
     let body = null;
-    
       body = (
         <Container>
             <Jumbotron className="background-transparent">

@@ -18,6 +18,7 @@ class Login extends Component {
       return <Redirect to="/signin"></Redirect>
     }
   }
+  
   componentDidMount() {
     console.log(firebase.isAuthenticated());
   }

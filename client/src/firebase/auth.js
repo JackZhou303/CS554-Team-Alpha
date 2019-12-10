@@ -2,9 +2,13 @@ import React from 'react';
 import { auth, firebase } from "./firebase";
 import { BrowserRouter as Router, Route,Link,Redirect} from "react-router-dom";
 
-async function doCreateUserWithEmailAndPassword(email, password, displayName) {
+require('firebase/database');
+
+async function doCreateUserWithEmailAndPassword(email, password, displayName,username) {
   await auth.createUserWithEmailAndPassword(email, password);
-  auth.currentUser.updateProfile({ displayName: displayName });
+    //to check if the username is occupied or not
+  auth.currentUser.updateProfile({ displayName: displayName});
+
   console.log(`DISPLAY NAME ${displayName}`);
 }
 
@@ -31,8 +35,31 @@ async function doPasswordUpdate(password) {
 }
 
 async function doSignOut() {
+  try{
   await auth.signOut();
   window.location.href="/login";
+  }catch(err){
+    alert(err)
+  }
+}
+
+function currentUser(){
+  var currentUser = firebase.auth().currentUser;
+  return currentUser;
+}
+function addScoresInFirebase(scores){
+  console.log("I cam ein");
+  // await firebase.database().ref('rank-list').push({
+  // uid: "uid",
+  // email: "email",
+  // scores: scores
+  // },function(error){
+  //   if(error){
+  //     // alert("Error:"+error)
+  //   }else{
+  //     // alert("Score submitted");
+  //   }
+  // });
 }
 
 export {
@@ -41,5 +68,7 @@ export {
   doSignInWithEmailAndPassword,
   doPasswordReset,
   doPasswordUpdate,
-  doSignOut
+  doSignOut,
+  currentUser,
+  addScoresInFirebase
 };

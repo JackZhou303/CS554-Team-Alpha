@@ -3,7 +3,11 @@ import {Link, Redirect} from "react-router-dom";
 import {Form,FormControl,InputGroup,Button, Jumbotron} from 'react-bootstrap'
 import SignOutButton from './SignOut';
 import { ServiceApi } from '../service';
-import { firebase } from "../firebase";
+import {auth } from "../firebase";
+import firebase from "firebase/app";
+
+
+
 
 export default class Game extends Component {
     constructor(props) {
@@ -66,7 +70,7 @@ export default class Game extends Component {
         this.setState(() => ({
                 isPaused: false
             }))
-            let seconds = 10;
+            let seconds = 1;
             this.playInterval = setInterval(async () => {
                 
                 if (seconds > 0) {
@@ -185,6 +189,8 @@ export default class Game extends Component {
         this.setState({value: " "});
     }
 
+    
+
     async verify_answer (event) {
         console.log('An answer was submitted: ' + this.state.value);
         const current_answer=this.state.answers[this.state.current_track]
@@ -254,6 +260,11 @@ export default class Game extends Component {
             return <Jumbotron className="background-transparent">  {timer} </Jumbotron>
         }
         else if(this.state.result && !this.state.isPlayin ) {
+            // var user = firebase.auth().currentUser;
+            // if(user){
+                // console.log(user)
+                auth.addScoresInFirebase(this.state.points);
+            // }
             return (<Jumbotron className="background-transparent"><div><h1>Game End</h1> <h1>Final Points: {this.state.points}</h1><Link to={`/`}><button className="pageBtn" >Home</button></Link></div></Jumbotron>)
         }   
         else if(this.state.device_ready && this.state.isPlayin ) {

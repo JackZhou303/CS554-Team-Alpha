@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { auth } from "../firebase";
-import {Form,InputGroup,FormControl,Container,Jumbotron, Button} from 'react-bootstrap';
+import {Form,InputGroup,FormControl,Container,Jumbotron,Alert, Button} from 'react-bootstrap';
 import { BrowserRouter as Router, Route,Link} from "react-router-dom";
 import { remoteConfig } from "firebase";
 const INITIAL_STATE = {
   displayName: "",
   email: "",
-  passwordOne: "",
+  password: "",
   passwordTwo: "",
   error: null
 };
@@ -17,7 +17,7 @@ class SignUp extends Component {
   }
   handleChange = e => {
     if (e.target.name === "passwordTwo") {
-      if (e.target.value !== document.getElementById("passwordOne").value) {
+      if (e.target.value !== document.getElementsByName("password").value) {
         this.setState({ error: "Passwords not the same" });
       } else {
         this.setState({ error: null });
@@ -29,12 +29,12 @@ class SignUp extends Component {
   };
   async onSubmit(e) {
     e.preventDefault();
-    const { displayName, email, passwordOne } = this.state;
+    const { displayName, email, password } = this.state;
 
     try {
       await auth.doCreateUserWithEmailAndPassword(
         email,
-        passwordOne,
+        password,
         displayName
       );
       this.setState({ ...INITIAL_STATE });
@@ -71,18 +71,18 @@ class SignUp extends Component {
   }
 
   render() {
-    const { displayName, email, passwordOne, passwordTwo, error } = this.state;
+    const { displayName, email, password, passwordTwo, error } = this.state;
 
     const isInvalid =
-      passwordOne !== passwordTwo ||
-      passwordOne === "" ||
+      password !== passwordTwo ||
+      password === "" ||
       email === "" ||
       displayName === "" ||
-      passwordOne.length < 6;
+      password.length < 6;
 
     return (
       <div>
-        {error && <p className="error">{error}</p>}
+        {error && <Alert variant="danger" className="error">{error}</Alert>}
         <Container>
         <Jumbotron>
         <Form onSubmit={this.onSubmit.bind(this)}>
@@ -123,7 +123,6 @@ class SignUp extends Component {
             <InputGroup className="mb-3">
             <FormControl
               placeholder="confirm password"
-              autoComplete="new-password"
               type="password"
               name="passwordTwo"
               onChange={this.handleChange}

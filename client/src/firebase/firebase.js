@@ -1,6 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/auth";
-
+require("firebase/database")
 const config = {
   apiKey: "AIzaSyDEJhlya6RHy3oSXtMo4D3Ldzg2Vjq0ksM",
     authDomain: "musicquiz-58fbb.firebaseapp.com",
@@ -16,8 +16,9 @@ const config = {
 firebase.initializeApp(config);
 
 const auth = firebase.auth();
+const database= firebase.database();
 
 function isAuthenticated() {
   return !!auth.currentUser;
 }
-export { auth, firebase, isAuthenticated };
+export { auth, database, firebase, isAuthenticated };

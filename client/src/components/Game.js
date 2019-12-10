@@ -60,6 +60,7 @@ export default class Game extends Component {
         //console.log(JSON.stringify(window._DEVICE_ID))
         let position, signal;
         if(!flag) signal = false
+        else signal= true
         if(window._PAUSE_POSITION) position = window._PAUSE_POSITION;
         else position = 0
         await ServiceApi.play_song(window._DEVICE_ID, position, this.state.current_track, this.state.genre_value, signal );

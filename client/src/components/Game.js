@@ -57,19 +57,18 @@ export default class Game extends Component {
     }
 
 
-    async play(flag) {
+    async play() {
         //console.log(JSON.stringify(window._DEVICE_ID))
-        let position, signal;
-        if(!flag) signal = false
-        else signal= true
+        let position;
+        
         if(window._PAUSE_POSITION) position = window._PAUSE_POSITION;
         else position = 0
-        await ServiceApi.play_song(window._DEVICE_ID, position, this.state.current_track, this.state.genre_value, signal );
+        await ServiceApi.play_song(window._DEVICE_ID, position, this.state.current_track);
         this.setState(() => ({
                 isPaused: false
             }))
-            let seconds = 1;
-            this.playInterval = setInterval(async () => {
+        let seconds = 10;
+        this.playInterval = setInterval(async () => {
                 
                 if (seconds > 0) {
                     seconds = seconds - 1
@@ -149,21 +148,19 @@ export default class Game extends Component {
 
     async get_tracks_and_play(){
 
-        await this.play(true);
-
-        const total_tracks= await ServiceApi.get_total_tracks();
-        const answers= await ServiceApi.get_answers();
+        const {total_tracks, answers}= await ServiceApi.get_track_info(this.state.genre_value);
+        await this.play();
         this.setState(() => ({
-            total_tracks: total_tracks.total,
-            answers: answers.answers
+            total_tracks: total_tracks,
+            answers: answers
         }), console.log(this.state.answers))
 
     }
 
     async play_game() {
         if(this.state.genre_value !== " " && this.state.genre_value !== "Choose a Genre" ) {
-        if(! this.state.isPlayin){
-            console.log("paly_game")
+        if(! this.state.isPlayin) {
+            console.log("play game")
             this.setState(() => ({
                 isPlayin: true,
                 current_track: 0

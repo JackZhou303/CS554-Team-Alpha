@@ -10,20 +10,18 @@ export default class ServiceApi {
         }
     }
 
-    static async get_total_tracks(){
+    static async get_track_info(genre){
         try {
-            const response= await fetch("http://localhost:4000/api/game-control/total_tracks")
-            const responseJson= response.json();
-            console.log(responseJson)
-            return responseJson;
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    static async get_answers(){
-        try {
-            const response= await fetch("http://localhost:4000/api/game-control/answers")
+            const response= await fetch("http://localhost:4000/api/game-control/track_info", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body:JSON.stringify ({
+                    genre: genre
+                })
+            })
             const responseJson= response.json();
             console.log(responseJson)
             return responseJson;

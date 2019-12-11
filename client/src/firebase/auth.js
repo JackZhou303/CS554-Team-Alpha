@@ -7,7 +7,8 @@ require('firebase/database');
 async function doCreateUserWithEmailAndPassword(email, password, displayName,username) {
   await auth.createUserWithEmailAndPassword(email, password);
     //to check if the username is occupied or not
-  auth.currentUser.updateProfile({ displayName: displayName});
+    //adding username in photourl because it's hard to add username in here
+  auth.currentUser.updateProfile({ displayName: displayName,photoURL:username});
 
   console.log(`DISPLAY NAME ${displayName}`);
 }

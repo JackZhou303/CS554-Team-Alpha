@@ -266,10 +266,12 @@ export default class Game extends Component {
                     console.log("Nope")
                 }
             })
+            console.log(user);
             //saving the highest score of that particular person
             if(score<=this.state.points){
                 firebase.database.ref(user.uid).set({
                     email:user.email,
+                    username:user.photoURL, //because i am saving username in photoUrl
                     scores:this.state.points
                 })
             }

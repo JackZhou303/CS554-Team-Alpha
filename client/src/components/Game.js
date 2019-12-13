@@ -90,6 +90,7 @@ export default class Game extends Component {
         }))
         await ServiceApi.skip_song(window._DEVICE_ID);
         let seconds = 10;
+        clearInterval(this.playInterval)
         clearInterval(this.skipInterval)
         this.skipInterval = setInterval( async () => {   
             if (seconds > 0) {
@@ -146,15 +147,13 @@ export default class Game extends Component {
         }, 1000)
     }
 
-    async get_tracks_and_play(){
-
-        const {total_tracks, answers}= await ServiceApi.get_track_info(this.state.genre_value);
+    async get_tracks_and_play() {
+        const {total_tracks, answers} = await ServiceApi.get_track_info(this.state.genre_value);
         await this.play();
         this.setState(() => ({
             total_tracks: total_tracks,
             answers: answers
         }), console.log(this.state.answers))
-
     }
 
     async play_game() {
@@ -165,8 +164,7 @@ export default class Game extends Component {
                 isPlayin: true,
                 current_track: 0
             }), 
-            await this.get_tracks_and_play(), this.start_time()
-          )
+            await this.get_tracks_and_play(), this.start_time())
         }
       }
     }

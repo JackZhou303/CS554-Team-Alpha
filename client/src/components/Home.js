@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route,Link} from "react-router-dom";
 import {Jumbotron,Button, Container,Row} from 'react-bootstrap';
 import {bounce} from "react-animations";
 import styled, {keyframes} from 'styled-components';
+import Ranking from './Ranking';
 const Bouncer=styled.div`animation: 3s ${keyframes`${bounce}`}infinte`;
 class Home extends Component {
   constructor(props) {
@@ -32,6 +33,7 @@ class Home extends Component {
           <Link to="/login"><Button variant="primary">Login with our App</Button></Link>
             </p>
           </Jumbotron>
+          <Ranking/>
         </div>
       );
     

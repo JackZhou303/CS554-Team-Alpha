@@ -31,7 +31,7 @@ export default class Game extends Component {
     this.verify_answer= this.verify_answer.bind(this);
     this.handle_answer = this.handle_answer.bind(this);
     this.handle_toggle_genre = this.handle_toggle_genre.bind(this);
-
+    this.submit_scores= this.submit_scores.bind(this);
     }
 
     async componentDidMount() {
@@ -237,15 +237,36 @@ export default class Game extends Component {
        }
     }
 
+    async submit_scores(){
+        let score = 0
+        let user = auth.currentUser();
+        let game_played = 0;
+        let snapshot= await firebase.database.ref(user.uid).once("value");
+        snapshot= snapshot.val();
+        if(snapshot){
+            score = -1 * snapshot.scores;
+            game_played = snapshot.played_games + 1
+            console.log(game_played)
+        }
+            //saving the highest score of that particular person
+        if(score <= this.state.points){
+            firebase.database.ref(user.uid).update({
+                    scores: -1 * this.state.points,
+                    played_games: game_played
+            })
+        } else {
+            firebase.database.ref(user.uid).update({
+                played_games: game_played
+          })
+        }
+    }
+
     render() {
 
         //html components
         let timer, signout;
         let input_box;
-
-        let user = auth.currentUser();
         
-
         const { minutes, seconds } = this.state
         
         timer = (
@@ -274,31 +295,8 @@ export default class Game extends Component {
         }
         else if(this.state.result && !this.state.isPlayin ) {
             //let user = auth.currentUser();
-            let score = 0
-            firebase.database.ref(user.uid).once("value").then(function(snapshot){
-                if(snapshot.exists()){
-                    score = -1 * snapshot.val().scores;
-                    console.log(score)
-                }else{
-                    console.log("Nope")
-                }
-            })
-            console.log(user);
-            //saving the highest score of that particular person
-            if(score <= this.state.points){
-                let game_played;
-                
-                if(!user.played_games){
-                    game_played = 1
-                } else game_played= user.game_played + 1
-
-                firebase.database.ref(user.uid).set({
-                    email:user.email,
-                    scores: -1 * this.state.points,
-                    played_games: game_played
-                })
-            }
-            return (<Jumbotron className="background-transparent"><div><h1>Game End</h1> <h1>Final Points: {this.state.points}</h1><Link to={`/`}><button className="pageBtn" >Home</button></Link></div></Jumbotron>)
+            
+            return (<Jumbotron className="background-transparent"><div><h1>Game End</h1> <h1>Final Points: {this.state.points}</h1><button className="game_btn" onClick={this.submit_scores}>Submit My Scores</button><Link to={`/`}><button className="pageBtn" >Home</button></Link></div></Jumbotron>)
         }   
         else if(this.state.device_ready && this.state.isPlayin ) {
             return ( 

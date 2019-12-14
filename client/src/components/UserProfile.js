@@ -71,7 +71,7 @@ class UserProfile extends Component {
             <p>Display Name: {this.state.currentUser.displayName}</p>
             <p>Scores: {-1* this.state.currentUser.scores}</p>
             <p>Email: {this.state.currentUser.email}</p>
-            <p>Username: {this.state.currentUser.username}</p>
+            {this.state.currentUser.photoURL?<p> </p>:<p>Username:{this.state.currentUser.photoURL}</p>}
           </Jumbotron>
           </Container>
 

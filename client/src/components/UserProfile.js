@@ -40,7 +40,7 @@ class UserProfile extends Component {
             <p>Username: {this.state.currentUser.photoURL}</p>
             <p>Score: {this.state.score}</p>
           </Jumbotron>
-        </Container>
+          </Container>
 
         }
         else return <Jumbotron className="background-transparent"><div>Loading...</div></Jumbotron>

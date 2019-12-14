@@ -15,7 +15,6 @@ recognition.onresult = function(event) {
     var command = event.results[last][0].transcript;
     message.value = command.toLowerCase()
     console.log(command.toLowerCase())
-    
 };
 recognition.onspeechend = function() {
     recognition.stop();

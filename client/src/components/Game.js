@@ -192,7 +192,7 @@ export default class Game extends Component {
         document.getElementById("answer-form").value=""
     }
 
-    async verify_answer (event) {
+    async verify_answer () {
         let myAnswer;
         if(this.state.value===""){
             myAnswer = document.getElementById("answer-form").value
@@ -201,10 +201,13 @@ export default class Game extends Component {
         }
 
         console.log('An answer was submitted: ' + myAnswer);
-        const current_answer=this.state.answers[this.state.current_track].toLowerCase();
+        const current_answer=this.state.answers[this.state.current_track];
+        const answer_lowercase = current_answer.toLowerCase();
+        const answer_alone = answer_lowercase.replace(/[^a-zA-Z ]+/g, '').replace('/ {2,}/',' ');
         console.log("right answer: "+ current_answer)
         
-        if(this._isMounted && myAnswer=== current_answer) {
+        if(this._isMounted && (myAnswer === current_answer || myAnswer === answer_alone
+            || myAnswer === answer_lowercase)) {
             this.setState({
                 points: this.state.points + 1,
                 try_again: false

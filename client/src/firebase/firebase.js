@@ -2,7 +2,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 require("firebase/database")
 const config = {
-  apiKey: "AIzaSyDEJhlya6RHy3oSXtMo4D3Ldzg2Vjq0ksM",
+    apiKey: "AIzaSyDEJhlya6RHy3oSXtMo4D3Ldzg2Vjq0ksM",
     authDomain: "musicquiz-58fbb.firebaseapp.com",
     databaseURL: "https://musicquiz-58fbb.firebaseio.com",
     projectId: "musicquiz-58fbb",

@@ -2,19 +2,19 @@ const express = require('express');
 const request = require('request');
 const router = express.Router();
 const SpotifyWebApi = require('spotify-web-api-node');
+require('dotenv').config();
 
 let scopes = ['streaming','user-read-private', 'user-read-email','playlist-read-private', 'playlist-modify-public','playlist-modify-private']
 
 let spotifyApi = new SpotifyWebApi({
-    clientId: '3cc049e06d534a8b853a48d4792ac432',
-    clientSecret: '697ff37969b04b41bfa1ea60de4a0038',
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
     redirectUri: "http://localhost:4000/api/game-control/callback",
 })
 
 
-let my_client_id = '3cc049e06d534a8b853a48d4792ac432';
+let my_client_id = process.env.CLIENT_ID;
 let redirect_uri= "http://localhost:4000/api/game-control/callback";
-//server side storage
 let token, user_id, tracks;
 
 
@@ -86,6 +86,7 @@ router.post('/track_info', async (req, res) => {
 });
 
 router.get('/refresh-token', async (req, res) => {
+
   res.send({token: token})
 });
 

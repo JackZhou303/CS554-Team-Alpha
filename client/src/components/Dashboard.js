@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { NavLink} from "react-router-dom";
-import { Container, Jumbotron } from "react-bootstrap";
+import { Container, Jumbotron, Image, Col, Row } from "react-bootstrap";
 import Ranking from './Ranking';
 import SignOutButton from './SignOut';
 
@@ -23,13 +23,30 @@ class Dashboard extends Component {
     
       links= (
         <div>
-        <NavLink to="/game" activeClassName="active">
-              Start a Game
-        </NavLink>
-            <br/>
-        <NavLink to="/user" activeClassName="active">
-              My Profile
-        </NavLink>
+        <Container>
+          <Row>
+            <Col>
+              <NavLink to="/game" activeClassName="active">
+                  <Image src="img/play.png" className="image-width-height-80" rounded ></Image>
+              </NavLink>
+            </Col>
+              <br/>
+            <Col>
+              <NavLink to="/user" activeClassName="active">
+                <Image src="img/profile.jpg" className="animated bounce image-width-height-80" rounded>
+                  </Image>
+              </NavLink>
+            </Col>
+          </Row>
+          <Row>
+            <Col className="font-text-width">
+              Play the Game Now
+            </Col>
+            <Col className="font-text-width">
+              Check your Profile
+            </Col>
+          </Row>
+        </Container>
         </div>
       );
     

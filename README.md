@@ -9,7 +9,7 @@ npm install
 ```
 in the project folder and in the client folder
 
-2.  Run redis server 
+2.  Run redis server: 
 ```bash
 redis-server
 ```

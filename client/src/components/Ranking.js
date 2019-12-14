@@ -18,25 +18,26 @@ class Ranking extends Component {
 
     async componentDidMount() {
         this.realTimeInterval=setInterval(async () => {
-            
         
-        let dbRef = firebase.database.ref('/');
-        let list = [];
-        await dbRef.orderByChild("scores").limitToFirst(10).on('child_added', snap => {
-            list.push({username: snap.val().username, score: -1 * snap.val().scores});
-            this.setState({data: list});
-         });
+            let dbRef = firebase.database.ref('/');
+            let list = [];
+            await dbRef.orderByChild("scores").limitToFirst(10).on('child_added', snap => {
+                list.push({username: snap.val().username, score: -1 * snap.val().scores});
+                this.setState({data: list});
+            });
 
-        }, 3000);
+        }, 1000);
     }
 
     render() {
         let ranking = (
             <div>
                 <h2>Ranking</h2>
+                <div>
                 <ol>
-        {this.state.data.sort().map((data, id) => <li key={id}>{data.username} : {data.score}</li>)}
+                    {this.state.data.sort().map((data, id) => <li key={id}>{data.username} : {data.score}</li>)}
                 </ol>
+                </div>
            </div>
         );
         return ranking;

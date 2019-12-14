@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import {Link} from "react-router-dom";
+import {Link, NavLink} from "react-router-dom";
 import {Form, FormControl, InputGroup, Button, Jumbotron} from 'react-bootstrap'
-import SignOutButton from './SignOut';
 import { ServiceApi } from '../service';
 import {auth,firebase} from "../firebase";
 
@@ -52,6 +51,7 @@ export default class Game extends Component {
 
     componentWillUnmount() {
         this._isMounted = false;
+        this.clearAllIntervals();
     }
 
     clearAllIntervals(){
@@ -225,15 +225,16 @@ export default class Game extends Component {
 
 
     render() {
+
         //html components
-        let timer = null,signout=null;
-        let input_box=null;
+        let timer, signout;
+        let input_box;
+
+        let user = auth.currentUser();
+        
+
         const { minutes, seconds } = this.state
-        signout = (
-            <div>
-                <SignOutButton></SignOutButton>
-            </div>
-        )
+        
         timer = (
             <div>
             { minutes === 0 && seconds === 0
@@ -254,11 +255,17 @@ export default class Game extends Component {
                 </div>
 
         );
-        if(minutes === 0 && seconds === 0){
+
+        if(!user.username){
+            this.clearAllIntervals();
+            return <Jumbotron className="background-transparent"><h1>Please Update Your Username !</h1>
+            <br/><NavLink to="/user" activeClassName="active">My Profile</NavLink></Jumbotron>
+        }
+        else if(minutes === 0 && seconds === 0){
             return <Jumbotron className="background-transparent">  {timer} </Jumbotron>
         }
         else if(this.state.result && !this.state.isPlayin ) {
-            var user = auth.currentUser();
+            //let user = auth.currentUser();
             let score = 0
             firebase.database.ref(user.uid).once("value").then(function(snapshot){
                 if(snapshot.exists()){

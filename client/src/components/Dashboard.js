@@ -1,30 +1,44 @@
 import React, { Component } from "react";
 import { NavLink} from "react-router-dom";
-import { Container,Jumbotron } from "react-bootstrap";
+import { Container, Jumbotron } from "react-bootstrap";
 import Ranking from './Ranking';
-
+import SignOutButton from './SignOut';
 
 class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      currentUser: null
     };
   }
 
   render() {
-    // let body = null;
-    // if(firebase.isAuthenticated()){
-      
+    let links, signout;
+    
+    signout = (
+      <div>
+          <SignOutButton></SignOutButton>
+      </div>
+    )
+    
+      links= (
+        <div>
+        <NavLink to="/game" activeClassName="active">
+              Start a Game
+        </NavLink>
+            <br/>
+        <NavLink to="/user" activeClassName="active">
+              My Profile
+        </NavLink>
+        </div>
+      );
+    
         return <Container>
             <Jumbotron className="background-transparent">
             <h1>Welcome to the Dashboard</h1>
             <p>To begin start by clicking the play icon below</p>
-            <NavLink exact to="/game" activeClassName="active">
-          Start a Game
-        </NavLink>
-        <NavLink exact to="/user" activeClassName="active">
-          My Profile
-        </NavLink>
+            {links}
+            {signout}
           </Jumbotron>
           <Jumbotron className="background-transparent">
             <Ranking/>

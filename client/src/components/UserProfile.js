@@ -26,15 +26,18 @@ class UserProfile extends Component {
 
 // auth handler to block un auth user
   render() {
-      
-        return <Container>
-            <Jumbotron className="background-transparent">
-            <h1>Welcome to the Dashboard</h1>
+
+        if(this.state.currentUser){
+          return <Container>
+          <Jumbotron className="background-transparent">
+          <h1>Welcome to the Dashboard</h1>
+            <p>Username: {this.state.currentUser.username}</p>
           </Jumbotron>
         </Container>
 
-    // }  else return <Redirect to="/signin"></Redirect>
-  
+        }
+        else return <Jumbotron className="background-transparent"><div>Loading...</div></Jumbotron>
+
   }
 }
 

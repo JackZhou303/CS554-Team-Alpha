@@ -53,6 +53,8 @@ class UserProfile extends Component {
           <h1>Welcome to the Dashboard</h1>
             <p>Display Name: {this.state.currentUser.displayName}</p>
             <p>Scores: {-1* this.state.currentUser.scores}</p>
+            <p>Email: {this.state.currentUser.email}</p>
+            <p>Username: {this.state.currentUser.username}</p>
           </Jumbotron>
           </Container>
 

@@ -25,6 +25,5 @@ if(document.querySelector('#btnGiveCommand')){
     document.querySelector('#btnGiveCommand').addEventListener('click', function(){
         recognition.start();
     });
-    clearInterval(interval)
   }
 }, 1000);

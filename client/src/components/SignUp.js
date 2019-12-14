@@ -5,7 +5,6 @@ import { Link} from "react-router-dom";
 const INITIAL_STATE = {
   displayName: "",
   email: "",
-  username:"",
   password: "",
   passwordTwo: "",
   error: null
@@ -29,14 +28,13 @@ class SignUp extends Component {
   };
   async onSubmit(e) {
     e.preventDefault();
-    const { displayName, email, password,username } = this.state;
+    const { displayName, email, password} = this.state;
 
     try {
       await auth.doCreateUserWithEmailAndPassword(
         email,
         password,
-        displayName,
-        username
+        displayName
       );
       this.setState({ ...INITIAL_STATE });
       this.props.history.push("/dashboard");
@@ -107,17 +105,6 @@ class SignUp extends Component {
               name="email"
               onChange={this.handleChange}
               value={this.state.email}
-            />
-            </InputGroup>
-            <Form.Label htmlFor="username">Username:</Form.Label>
-          <InputGroup className="mb-3">
-            <FormControl
-              placeholder="username"
-              autoComplete="username"
-              type="username"
-              name="username"
-              onChange={this.handleChange}
-              value={this.state.username}
             />
             </InputGroup>
           <Form.Label htmlFor="password">Password:</Form.Label>

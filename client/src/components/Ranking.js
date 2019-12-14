@@ -11,13 +11,7 @@ class Ranking extends Component {
     }
 
 
-    componentWillUnmount() {
-        clearInterval(this.realTimeInterval);
-        }
-
-
     async componentDidMount() {
-        this.realTimeInterval=setInterval(async () => {
         
             let dbRef = firebase.database.ref('/');
             let list = [];
@@ -25,8 +19,6 @@ class Ranking extends Component {
                 list.push({username: snap.val().displayName, score: -1 * snap.val().scores});
                 this.setState({data: list});
             });
-
-        }, 1000);
     }
 
     render() {

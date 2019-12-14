@@ -277,7 +277,8 @@ export default class Game extends Component {
             let score = 0
             firebase.database.ref(user.uid).once("value").then(function(snapshot){
                 if(snapshot.exists()){
-                    score = -1 * snapshot.val().score;
+                    score = -1 * snapshot.val().scores;
+                    console.log(score)
                 }else{
                     console.log("Nope")
                 }

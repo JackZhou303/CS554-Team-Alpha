@@ -11,42 +11,34 @@ class UserProfile extends Component {
         currentUser: null
     };
   }
-
-  get_current_user(){
-    const current_user= auth.currentUser();
-    console.log(current_user)
-    return current_user
-  }
-
+  
   componentDidMount(){
-    const user= this.get_current_user();
-    this.setState({
-      currentUser: user
-    }, console.log(user))
     //init create first user instance
     let user_snapshot;
-    firebase.database.ref(user.uid).once("value").then(function(snapshot){
-      user_snapshot=snapshot.val();
-      
+    let currentUser = auth.currentUser();
+    this.setState({
+      currentUser:currentUser,
+      score:0
     })
-
-    firebase.database.ref(user.uid).set({
-        displayName: user.displayName,
-        email: user.email,
-        username: " ", 
-        scores: 0,
-        played_games: 0
+    firebase.database.ref(currentUser.uid).once("value").then(function(snapshot){
+      user_snapshot=snapshot.val();
+      this.setState({
+        score:user_snapshot.score
+      })
     })
   }
 
 // auth handler to block un auth user
   render() {
-
         if(this.state.currentUser){
           return <Container>
           <Jumbotron className="background-transparent">
           <h1>Welcome to the Dashboard</h1>
-            <p>Username: {this.state.currentUser.username}</p>
+            <p>Your User Id: {this.state.currentUser.uid}</p>
+            <p>Display Name: {this.state.currentUser.displayName}</p>
+            <p>Email: {this.state.currentUser.email}</p>
+            <p>Username: {this.state.currentUser.photoURL}</p>
+            <p>Score: {this.state.score}</p>
           </Jumbotron>
         </Container>
 

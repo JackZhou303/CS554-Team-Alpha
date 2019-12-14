@@ -48,7 +48,6 @@ function currentUser(){
   return currentUser;
 }
 function addScoresInFirebase(scores){
-  console.log("I cam ein");
   // await firebase.database().ref('rank-list').push({
   // uid: "uid",
   // email: "email",

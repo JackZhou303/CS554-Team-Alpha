@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import "./App.css";
-import Signin from "./components/Signin";
+import SignIn from "./components/Signin";
 import SignUp from "./components/SignUp";
 import Game from "./components/Game";
 import Home from "./components/Home";
 import Dashboard from "./components/Dashboard";
 import Login from "./components/Login";
-import { BrowserRouter as Router, Route,Switch} from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Redirect} from "react-router-dom";
+import { firebase } from "./firebase";
+import UserProfile from "./components/UserProfile";
 
 class App extends Component {
   constructor(props) {
@@ -23,11 +25,12 @@ class App extends Component {
           <br/>
           <div className="App-body">
             <Route path="/" exact component={Home} />
-            <Route path="/game" component={Game} />
+            <PrivateRoute path="/game" component={Game} />
             <Route path="/login" component={Login}/>
-            <Route path="/signin" component={Signin}/>
+            <Route path="/signin" component={SignIn}/>
             <Route path="/signup" component={SignUp}/>
-            <Route path="/dashboard" component={Dashboard}/>
+            <PrivateRoute path="/dashboard" component={Dashboard}/>
+            <PrivateRoute path="/user" component={UserProfile}/>
           </div>
         </div>
            </React.Fragment>
@@ -36,5 +39,22 @@ class App extends Component {
     );
   }
 }
+
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={props =>
+      firebase.isAuthenticated() === true ? (
+        <Component {...props} {...rest} />
+      ) : (
+        <Redirect
+          to={{
+            pathname: "/signin"
+          }}
+        />
+      )
+    }
+    />
+);
 
 export default App;

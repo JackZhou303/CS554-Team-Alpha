@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Redirect} from "react-router-dom";
+import { BrowserRouter as Router, Route, Redirect, NavLink} from "react-router-dom";
 import { Container,Jumbotron } from "react-bootstrap";
-import { firebase } from "../firebase";
+import Ranking from './Ranking';
 
 
 class Dashboard extends Component {
@@ -19,7 +19,15 @@ class Dashboard extends Component {
             <Jumbotron className="background-transparent">
             <h1>Welcome to the Dashboard</h1>
             <p>To begin start by clicking the play icon below</p>
-            <a href="/game">Start Game</a>
+            <NavLink exact to="/game" activeClassName="active">
+          Start a Game
+        </NavLink>
+        <NavLink exact to="/user" activeClassName="active">
+          My Profile
+        </NavLink>
+          </Jumbotron>
+          <Jumbotron className="background-transparent">
+            <Ranking/>
           </Jumbotron>
         </Container>
 

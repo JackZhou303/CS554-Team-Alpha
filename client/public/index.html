@@ -38,10 +38,13 @@
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
   <script>
     window.onSpotifyWebPlaybackSDKReady = () => {
-      const data = window._DEFAULT_DATA;
-      const token = data;
+      
+      let token;
+      let client_interval= setInterval(function(){ 
+      token = window._DEFAULT_DATA;
       console.log("Token: "+ token)
       if(token) {
+      clearInterval(client_interval)
       const player = new Spotify.Player({
         name: 'Web Playback SDK Quick Start Player',
         getOAuthToken: cb => { cb(token); }
@@ -73,6 +76,7 @@
       // Connect to the player!
       player.connect();
      }
+    }, 3000);
     }
   </script>
     

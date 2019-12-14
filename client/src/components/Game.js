@@ -24,6 +24,7 @@ export default class Game extends Component {
         genre_value:" ",
         points:0
      }
+
     this.play = this.play.bind(this);
     this.skip = this.skip.bind(this);
     this.play_game= this.play_game.bind(this);
@@ -111,6 +112,7 @@ export default class Game extends Component {
     }
     else {
         await this.pause();
+        this.clearAllIntervals();
         this.setState(() => ({
             isPlayin: false,
             result: true
@@ -256,7 +258,6 @@ export default class Game extends Component {
             return <Jumbotron className="background-transparent">  {timer} </Jumbotron>
         }
         else if(this.state.result && !this.state.isPlayin ) {
-            this.clearAllIntervals();
             var user = auth.currentUser();
             let score = 0
             firebase.database.ref(user.uid).once("value").then(function(snapshot){
@@ -269,15 +270,20 @@ export default class Game extends Component {
             console.log(user);
             //saving the highest score of that particular person
             if(score <= this.state.points){
-                let username;
+                let username, game_played;
                 if(!user.username){
-                    username=user.displayName
+                    username= " "
                 }
                 else username= user.username
+                if(!user.played_games){
+                    game_played = 1
+                } else game_played= user.game_played+1
+
                 firebase.database.ref(user.uid).set({
                     email:user.email,
                     username: username, //because i am saving username in photoUrl
-                    scores: -1 * this.state.points
+                    scores: -1 * this.state.points,
+                    played_games: game_played
                 })
             }
             return (<Jumbotron className="background-transparent"><div><h1>Game End</h1> <h1>Final Points: {this.state.points}</h1><Link to={`/`}><button className="pageBtn" >Home</button></Link></div></Jumbotron>)

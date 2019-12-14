@@ -189,7 +189,9 @@ export default class Game extends Component {
     
     reset_form(){
         this.setState({value: ""});
+        if(this.state.isPlayin) {
         document.getElementById("answer-form").value=""
+        }
     }
 
     async verify_answer () {

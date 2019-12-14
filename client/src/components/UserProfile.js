@@ -27,28 +27,31 @@ class UserProfile extends Component {
     let user_snapshot;
     firebase.database.ref(user.uid).once("value").then(function(snapshot){
       user_snapshot=snapshot.val();
-      
+      if(!user_snapshot || !user_snapshot.hasProfile){
+        firebase.database.ref(user.uid).set({
+            displayName: user.displayName,
+            email: user.email,
+            username: " ", 
+            scores: 0,
+            played_games: 0,
+            hasProfile: true
+        })
+      }
     })
 
-    firebase.database.ref(user.uid).set({
-        displayName: user.displayName,
-        email: user.email,
-        username: " ", 
-        scores: 0,
-        played_games: 0
-    })
+    
   }
 
 // auth handler to block un auth user
   render() {
-
         if(this.state.currentUser){
           return <Container>
           <Jumbotron className="background-transparent">
           <h1>Welcome to the Dashboard</h1>
+            <p>Display Name: {this.state.currentUser.displayName}</p>
             <p>Username: {this.state.currentUser.username}</p>
           </Jumbotron>
-        </Container>
+          </Container>
 
         }
         else return <Jumbotron className="background-transparent"><div>Loading...</div></Jumbotron>

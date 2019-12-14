@@ -2,6 +2,7 @@ const express = require('express');
 const request = require('request');
 const router = express.Router();
 const SpotifyWebApi = require('spotify-web-api-node');
+const helper= require('./game.helper');
 require('dotenv').config();
 
 let scopes = ['streaming','user-read-private', 'user-read-email','playlist-read-private', 'playlist-modify-public','playlist-modify-private']
@@ -15,7 +16,7 @@ let spotifyApi = new SpotifyWebApi({
 
 let my_client_id = process.env.CLIENT_ID;
 let redirect_uri= "http://localhost:4000/api/game-control/callback";
-let token, user_id, tracks;
+let user_id, tracks;
 
 
 async function get_tracks(genre){
@@ -73,22 +74,36 @@ async function get_tracks(genre){
   
 }
 
-router.get('/token', async (req, res) => {
-    res.send({token: token})
-});
+async function swap_and_refresh_token(){
+  try {
+    const data= await spotifyApi.refreshAccessToken();
+    const access_token= data.body['access_token'];
+    await spotifyApi.setAccessToken(access_token);
+    const refresh_token= await helper.getToken('refresh_token');
+    await helper.saveToken({'access_token': access_token, 'refresh_token': refresh_token});
+  } catch (error) {
+    console.log('Could not refresh access token', error);
+  }
+};
 
 router.post('/track_info', async (req, res) => {
   const {genre}= req.body
   let {track_list, track_names} = await get_tracks(genre);
   tracks= track_list
   let total_tracks=track_list.length;
-  res.send({total_tracks: total_tracks, answers: track_names})
+  res.send ({total_tracks: total_tracks, answers: track_names})
 });
 
-router.get('/refresh-token', async (req, res) => {
-
-  res.send({token: token})
+router.get('/token', async (req, res) => {
+    try {
+      const token= await helper.getToken('access_token');
+      res.send ({token: token})
+    } catch (error) {
+      console.log(error)
+      
+    }
 });
+
 
 router.post('/play', async (req, res) => {
   const{ device, position, offset}=req.body;
@@ -99,6 +114,7 @@ router.post('/play', async (req, res) => {
     "position_ms": position
   }
 
+  const token =await helper.getToken('access_token')
   let requestOptions = {
     uri: "https://api.spotify.com/v1/me/player/play?device_id=" + device,
     body: JSON.stringify(request_body),
@@ -122,7 +138,8 @@ router.post('/play', async (req, res) => {
 
 
 router.post('/pause', async (req, res) => {
-  //console.log(req.body)
+  
+  const token= await helper.getToken('access_token');
   let device_id=req.body.device;
   let requestOptions = {
     uri: "https://api.spotify.com/v1/me/player/pause?device_id="+device_id,
@@ -144,7 +161,8 @@ router.post('/pause', async (req, res) => {
 });
 
 router.post('/skip', async (req, res) => {
-  //console.log(req.body)
+
+  const token= await helper.getToken('access_token');
   let device_id=req.body.device;
   let requestOptions = {
     uri: "https://api.spotify.com/v1/me/player/next?device_id="+device_id,
@@ -171,7 +189,6 @@ router.get('/spotify-login', function(req, res) {
       '&client_id=' + my_client_id +
       (scopes ? '&scope=' + encodeURIComponent(scopes) : '') +
       '&redirect_uri=' + encodeURIComponent(redirect_uri));
-    //res.json({token:"Yes"})
 });
 
 router.get('/callback', async (req,res) => {
@@ -183,8 +200,10 @@ router.get('/callback', async (req,res) => {
       const { access_token, refresh_token } = data.body;
       spotifyApi.setAccessToken(access_token);
       spotifyApi.setRefreshToken(refresh_token);
-
-      token=access_token;
+      const tokenJson = {'access_token': access_token, 'refresh_token': refresh_token}
+      await helper.saveToken(tokenJson);
+      //refresh token every 3600 secs
+      setInterval(swap_and_refresh_token(), 3600000);
       res.redirect("http://localhost:4000/api/game-control/token")
     } catch(err) {
       res.redirect('/#/error/invalid token');

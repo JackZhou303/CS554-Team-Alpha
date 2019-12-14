@@ -2,7 +2,7 @@ const gameApi = require("./game");
 
 const constructorMethod = app => {
   app.use("/api/game-control", gameApi);
-  app.get('/start', function (req, res, next) {
+  app.get('/', function (req, res, next) {
     res.redirect("/api/game-control/spotify-login");
 })
 

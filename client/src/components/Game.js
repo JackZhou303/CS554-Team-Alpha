@@ -23,6 +23,7 @@ export default class Game extends Component {
         genre_value:" ",
         points:0
      }
+     
 
     this.play = this.play.bind(this);
     this.skip = this.skip.bind(this);
@@ -30,6 +31,7 @@ export default class Game extends Component {
     this.verify_answer= this.verify_answer.bind(this);
     this.handle_answer = this.handle_answer.bind(this);
     this.handle_toggle_genre = this.handle_toggle_genre.bind(this);
+
     }
 
     async componentDidMount() {
@@ -176,6 +178,7 @@ export default class Game extends Component {
     }
 
     handle_answer (event) {
+        console.log("Answer entered: " + event.target.value.trim())
         this.setState({value: event.target.value.trim()});
     }
 
@@ -185,17 +188,23 @@ export default class Game extends Component {
     }
     
     reset_form(){
-        this.setState({value: " "});
+        this.setState({value: ""});
+        document.getElementById("answer-form").value=""
     }
 
-    
-
     async verify_answer (event) {
-        console.log('An answer was submitted: ' + this.state.value);
-        const current_answer=this.state.answers[this.state.current_track]
+        let myAnswer;
+        if(this.state.value===""){
+            myAnswer = document.getElementById("answer-form").value
+        } else {
+            myAnswer = this.state.value
+        }
+
+        console.log('An answer was submitted: ' + myAnswer);
+        const current_answer=this.state.answers[this.state.current_track].toLowerCase();
         console.log("right answer: "+ current_answer)
         
-        if(this._isMounted && this.state.value=== current_answer) {
+        if(this._isMounted && myAnswer=== current_answer) {
             this.setState({
                 points: this.state.points + 1,
                 try_again: false
@@ -223,7 +232,6 @@ export default class Game extends Component {
        }
     }
 
-
     render() {
 
         //html components
@@ -248,21 +256,22 @@ export default class Game extends Component {
                 <div>
                     <form>
                         {this.state.try_again? <p>Try Again!</p>: " "}
-                        <input id="answer-form" type="text" value={this.state.value} onChange={this.handle_answer} />
+                        <input id="answer-form" type="text" onChange={this.handle_answer} />
                         <input onClick={this.verify_answer} type="button" value="Submit" />
-
                     </form>
+                        <button id='btnGiveCommand'>Give Command!</button>
                 </div>
 
         );
 
-        if(!user.username){
-            this.clearAllIntervals();
-            return <Jumbotron className="background-transparent"><h1>Please Update Your Username !</h1>
-            <br/><NavLink to="/user" activeClassName="active">My Profile</NavLink></Jumbotron>
-        }
-        else if(minutes === 0 && seconds === 0){
-            return <Jumbotron className="background-transparent">  {timer} </Jumbotron>
+        // if(!user.username){
+        //     console.log(user)
+        //     this.clearAllIntervals();
+        //     return <Jumbotron className="background-transparent"><h1>Please Update Your Username !</h1>
+        //     <br/><NavLink to="/user" activeClassName="active">My Profile</NavLink></Jumbotron>
+        // }
+         if(minutes === 0 && seconds === 0){
+            return <Jumbotron className="background-transparent"> {timer} </Jumbotron>
         }
         else if(this.state.result && !this.state.isPlayin ) {
             //let user = auth.currentUser();

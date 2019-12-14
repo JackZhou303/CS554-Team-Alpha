@@ -14,7 +14,7 @@ class Dashboard extends Component {
 
   render() {
     let links, signout;
-    
+
     signout = (
       <div>
           <SignOutButton></SignOutButton>

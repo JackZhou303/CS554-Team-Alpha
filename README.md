@@ -4,18 +4,22 @@
 ---
 ## Installation and Usage
 1. Install all of the dependencies. Run
-```npm install
+```bash
+npm install
 ```
 in the project folder and in the client folder
 
 2.  Run redis server 
-```redis-server
+```bash
+redis-server
 ```
 3.  Run server:
-```npm start
+```bash
+npm start
 ``` 
 Run cleint:
-```cd client
+```bash
+cd client
 npm start
 ``` 
 4. Go to the following url http://localhost:4000/api/game-control/token to get a token

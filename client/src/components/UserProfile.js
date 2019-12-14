@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Redirect} from "react-router-dom";
 import { Container,Jumbotron } from "react-bootstrap";
-import { auth} from "../firebase";
+import { firebase, auth} from "../firebase";
 
 
 class UserProfile extends Component {
@@ -15,13 +15,28 @@ class UserProfile extends Component {
   get_current_user(){
     const current_user= auth.currentUser();
     console.log(current_user)
-    this.setState({
-        currentUser: current_user
-    }, console.log(current_user))
+    return current_user
   }
 
   componentDidMount(){
-    this.get_current_user();
+    const user= this.get_current_user();
+    this.setState({
+      currentUser: user
+    }, console.log(user))
+    //init create first user instance
+    let user_snapshot;
+    firebase.database.ref(user.uid).once("value").then(function(snapshot){
+      user_snapshot=snapshot.val();
+      
+    })
+
+    firebase.database.ref(user.uid).set({
+        displayName: user.displayName,
+        email: user.email,
+        username: " ", 
+        scores: 0,
+        played_games: 0
+    })
   }
 
 // auth handler to block un auth user

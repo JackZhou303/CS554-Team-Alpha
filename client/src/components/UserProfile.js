@@ -12,22 +12,54 @@ class UserProfile extends Component {
         score:0
     };
   }
-  
-  componentDidMount(){
-    //init create first user instance
-    let user_snapshot;
-    let currentUser = auth.currentUser();
+
+  get_current_user(){
+    const current_user= auth.currentUser();
+    console.log(current_user)
+    return current_user
+  }
+
+  async componentDidMount(){
+    const user= this.get_current_user();
+//     //init create first user instance
+// <<<<<<< HEAD
+//     let user_snapshot;
+//     let currentUser = auth.currentUser();
+//     this.setState({
+//       currentUser:currentUser,
+//     })
+//     firebase.database.ref(currentUser.uid).once("value").then(function(snapshot){
+//       user_snapshot=snapshot.val();
+//       if(user_snapshot){
+//         this.setState({
+//           score:user_snapshot.score
+//         })
+//       }
+//     })
+// =======
+    let user_snapshot, user_info;
+    user_snapshot= await firebase.database.ref(user.uid).once("value");
+    user_snapshot= user_snapshot.val()
+
+    if(!user_snapshot || !user_snapshot.hasProfile){
+      firebase.database.ref(user.uid).set({
+          displayName: user.displayName,
+          email: user.email,
+          username: " ", 
+          scores: 0,
+          played_games: 0,
+          hasProfile: true
+      })
+      user_snapshot= await firebase.database.ref(user.uid).once("value");
+      user_info= user_snapshot.val()
+
+      console.log(user_info)
+    } else user_info= user_snapshot;
+
     this.setState({
-      currentUser:currentUser,
-    })
-    firebase.database.ref(currentUser.uid).once("value").then(function(snapshot){
-      user_snapshot=snapshot.val();
-      if(user_snapshot){
-        this.setState({
-          score:user_snapshot.score
-        })
-      }
-    })
+      currentUser: user_info
+    }, console.log(user_info))
+// >>>>>>> f6768c7a10416b4efba5ca87427d77e3e2e859dc
   }
 
 // auth handler to block un auth user
@@ -36,11 +68,10 @@ class UserProfile extends Component {
           return <Container>
           <Jumbotron className="background-transparent">
           <h1>Welcome to the Dashboard</h1>
-            <p>Your User Id: {this.state.currentUser.uid}</p>
             <p>Display Name: {this.state.currentUser.displayName}</p>
+            <p>Scores: {-1* this.state.currentUser.scores}</p>
             <p>Email: {this.state.currentUser.email}</p>
-            <p>Username: {this.state.currentUser.photoURL}</p>
-            <p>Score: {this.state.score}</p>
+            <p>Username: {this.state.currentUser.username}</p>
           </Jumbotron>
           </Container>
 

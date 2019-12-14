@@ -269,12 +269,6 @@ export default class Game extends Component {
 
         );
 
-        // if(!user.username){
-        //     console.log(user)
-        //     this.clearAllIntervals();
-        //     return <Jumbotron className="background-transparent"><h1>Please Update Your Username !</h1>
-        //     <br/><NavLink to="/user" activeClassName="active">My Profile</NavLink></Jumbotron>
-        // }
          if(minutes === 0 && seconds === 0){
             return <Jumbotron className="background-transparent"> {timer} </Jumbotron>
         }

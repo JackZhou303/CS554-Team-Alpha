@@ -4,12 +4,11 @@ import { BrowserRouter as Router, Route,Link,Redirect} from "react-router-dom";
 
 require('firebase/database');
 
-async function doCreateUserWithEmailAndPassword(email, password, displayName,username) {
+async function doCreateUserWithEmailAndPassword(email, password, displayName, username) {
   await auth.createUserWithEmailAndPassword(email, password);
     //to check if the username is occupied or not
     //adding username in photourl because it's hard to add username in here
-  auth.currentUser.updateProfile({ displayName: displayName,photoURL:username});
-
+  auth.currentUser.updateProfile({ displayName: displayName});
   console.log(`DISPLAY NAME ${displayName}`);
 }
 

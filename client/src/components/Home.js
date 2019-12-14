@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route,Link} from "react-router-dom";
+import { Link} from "react-router-dom";
 import {Jumbotron,Button, Container,Row} from 'react-bootstrap';
 import {bounce} from "react-animations";
 import styled, {keyframes} from 'styled-components';

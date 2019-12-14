@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Redirect} from "react-router-dom";
 import { Container,Jumbotron } from "react-bootstrap";
-import { auth, firebase } from "../firebase";
+import { auth} from "../firebase";
 
 
 class UserProfile extends Component {

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Redirect, NavLink} from "react-router-dom";
+import { NavLink} from "react-router-dom";
 import { Container,Jumbotron } from "react-bootstrap";
 import Ranking from './Ranking';
 

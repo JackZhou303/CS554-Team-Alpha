@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import {Form,FormControl,InputGroup,Button,Jumbotron, Container} from 'react-bootstrap';
-import ReactDOM from 'react-dom';
 import { auth } from "../firebase";
 
 import { Link } from "react-router-dom";

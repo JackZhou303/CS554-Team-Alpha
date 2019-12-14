@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import {Link, Redirect} from "react-router-dom";
-import {Form,FormControl,InputGroup,Button, Jumbotron} from 'react-bootstrap'
+import {Link} from "react-router-dom";
+import {Form, FormControl, InputGroup, Button, Jumbotron} from 'react-bootstrap'
 import SignOutButton from './SignOut';
 import { ServiceApi } from '../service';
 import {auth,firebase} from "../firebase";
@@ -51,6 +51,9 @@ export default class Game extends Component {
 
     componentWillUnmount() {
         this._isMounted = false;
+    }
+
+    clearAllIntervals(){
         clearInterval(this.playInterval);
         clearInterval(this.timeInterval);
         clearInterval(this.skipInterval);
@@ -149,6 +152,7 @@ export default class Game extends Component {
 
     async get_tracks_and_play() {
         const {total_tracks, answers} = await ServiceApi.get_track_info(this.state.genre_value);
+        window._PAUSE_POSITION = 0;
         await this.play();
         this.setState(() => ({
             total_tracks: total_tracks,
@@ -252,22 +256,28 @@ export default class Game extends Component {
             return <Jumbotron className="background-transparent">  {timer} </Jumbotron>
         }
         else if(this.state.result && !this.state.isPlayin ) {
-            var user = auth.currentUser()
+            this.clearAllIntervals();
+            var user = auth.currentUser();
             let score = 0
             firebase.database.ref(user.uid).once("value").then(function(snapshot){
                 if(snapshot.exists()){
-                    score=snapshot.val().score;
+                    score = -1 * snapshot.val().score;
                 }else{
                     console.log("Nope")
                 }
             })
             console.log(user);
             //saving the highest score of that particular person
-            if(score<=this.state.points){
+            if(score <= this.state.points){
+                let username;
+                if(!user.username){
+                    username=user.displayName
+                }
+                else username= user.username
                 firebase.database.ref(user.uid).set({
                     email:user.email,
-                    username:user.photoURL, //because i am saving username in photoUrl
-                    scores:this.state.points
+                    username: username, //because i am saving username in photoUrl
+                    scores: -1 * this.state.points
                 })
             }
             return (<Jumbotron className="background-transparent"><div><h1>Game End</h1> <h1>Final Points: {this.state.points}</h1><Link to={`/`}><button className="pageBtn" >Home</button></Link></div></Jumbotron>)

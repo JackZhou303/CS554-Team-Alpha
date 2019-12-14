@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { auth } from "../firebase";
 import {Form,InputGroup,FormControl,Container,Jumbotron,Alert, Button} from 'react-bootstrap';
-import { BrowserRouter as Router, Route,Link} from "react-router-dom";
+import { Link} from "react-router-dom";
 const INITIAL_STATE = {
   displayName: "",
   email: "",

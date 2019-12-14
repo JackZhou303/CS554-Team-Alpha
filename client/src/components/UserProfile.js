@@ -44,8 +44,7 @@ class UserProfile extends Component {
     if(!user_snapshot || !user_snapshot.hasProfile){
       firebase.database.ref(user.uid).set({
           displayName: user.displayName,
-          email: user.email,
-          username: " ", 
+          email: user.email, 
           scores: 0,
           played_games: 0,
           hasProfile: true

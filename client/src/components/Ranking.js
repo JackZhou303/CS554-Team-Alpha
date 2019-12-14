@@ -22,7 +22,7 @@ class Ranking extends Component {
             let dbRef = firebase.database.ref('/');
             let list = [];
             await dbRef.orderByChild("scores").limitToFirst(10).on('child_added', snap => {
-                list.push({username: snap.val().username, score: -1 * snap.val().scores});
+                list.push({username: snap.val().displayName, score: -1 * snap.val().scores});
                 this.setState({data: list});
             });
 

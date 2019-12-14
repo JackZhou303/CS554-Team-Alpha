@@ -65,7 +65,7 @@ class SignUp extends Component {
     try {
       await auth.doSocialSignIn(provider);
       this.setState({ ...INITIAL_STATE });
-      this.props.history.push("/home");
+      this.props.history.push("/dashboard");
     } catch (error) {
       console.log(error);
     }

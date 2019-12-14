@@ -47,61 +47,45 @@ class Dashboard extends Component {
     )
     
     game_link= (
-      <div>
-      <NavLink to="/game" activeClassName="active">
-            Start a Game
-      </NavLink>
+      <Col>
+              <NavLink to="/game" activeClassName="active">
+                  <Image src="img/play.png" className="image-width-height-80" alt="play_game" rounded ></Image>
+              </NavLink>
+      </Col>
       
-      </div>
     );
       
       profile_link= (
-        <div>
-        <NavLink to="/user" activeClassName="active">
-              My Profile
-        </NavLink>
-        </div>
+        <Col>
+              <NavLink to="/user" activeClassName="active">
+                <Image src="img/profile.jpg" className="animated bounce image-width-height-80" alt="profile" rounded>
+                  </Image>
+              </NavLink>
+        </Col>
       );
 
       profile_link_with_warning= (
-        <div>
+        <Col>
           <h2>Please click to initialize your profile</h2>
-        <NavLink to="/user" activeClassName="active">
-              My Profile
-        </NavLink>
-        <Container>
-          <Row>
-            <Col>
-              <NavLink to="/game" activeClassName="active">
-                  <Image src="img/play.png" className="image-width-height-80" rounded ></Image>
-              </NavLink>
-            </Col>
-              <br/>
-            <Col>
               <NavLink to="/user" activeClassName="active">
-                <Image src="img/profile.jpg" className="animated bounce image-width-height-80" rounded>
+                <Image src="img/profile.jpg" className="animated bounce image-width-height-80" alt="profile" rounded>
                   </Image>
               </NavLink>
-            </Col>
-          </Row>
-          <Row>
-            <Col className="font-text-width">
-              Play the Game Now
-            </Col>
-            <Col className="font-text-width">
-              Check your Profile
-            </Col>
-          </Row>
-        </Container>
-        </div>
+
+        </Col>
       );
     
         return <Container>
             <Jumbotron className="background-transparent">
             <h1>Welcome to the Dashboard</h1>
             <p>To begin start by clicking the play icon below</p>
+            <Container></Container>
+            <Row>
             {!this.state.isNew? game_link: ""}
-            {!this.state.isNew? profile_link: profile_link_with_warning}
+              <br/>
+              {!this.state.isNew? profile_link: profile_link_with_warning}
+          </Row>
+            
             {signout}
           </Jumbotron>
           <Jumbotron className="background-transparent">

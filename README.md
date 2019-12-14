@@ -5,12 +5,12 @@
 ## Installation and Usage
 1. Install all of the dependencies. Run
 ```npm install
-````
+```
 in the project folder and in the client folder
 
 2.  Run redis server 
 ```redis-server
-````
+```
 3.  Run server:
 ```npm start
 ``` 

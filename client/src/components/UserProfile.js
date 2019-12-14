@@ -8,7 +8,8 @@ class UserProfile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        currentUser: null
+        currentUser: null,
+        score:0
     };
   }
   
@@ -18,13 +19,14 @@ class UserProfile extends Component {
     let currentUser = auth.currentUser();
     this.setState({
       currentUser:currentUser,
-      score:0
     })
     firebase.database.ref(currentUser.uid).once("value").then(function(snapshot){
       user_snapshot=snapshot.val();
-      this.setState({
-        score:user_snapshot.score
-      })
+      if(user_snapshot){
+        this.setState({
+          score:user_snapshot.score
+        })
+      }
     })
   }
 

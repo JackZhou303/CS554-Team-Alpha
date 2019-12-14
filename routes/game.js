@@ -203,7 +203,8 @@ router.get('/callback', async (req,res) => {
       const tokenJson = {'access_token': access_token, 'refresh_token': refresh_token}
       await helper.saveToken(tokenJson);
       //refresh token every 3600 secs
-      setTimeout(() => setInterval(swap_and_refresh_token(), 3600000), 3600000);
+      setTimeout(() => setInterval(async function () {
+        await swap_and_refresh_token()}, 3600000), 3600000);
 
       res.redirect("http://localhost:4000/api/game-control/token")
     } catch(err) {

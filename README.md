@@ -45,7 +45,7 @@ and then you can run
 ## WALKTHROUGH
 As you see the application running, we have following features in here: 
 1. Firebase Login
-2. Spotify SDK
+2. Spotify SDK Player
 3. Voice Recognition (for speech into text conversions)
 4. REDIS
 5. User Profile
@@ -65,7 +65,7 @@ To run the service you will need an access token at server side. So as soon as y
 5. React - For front end
 6. Bootstrap- As we all know
 7. Voice Recognition
-8. Spotify SDK
+8. Spotify SDK player
 
 
 ## Contributors

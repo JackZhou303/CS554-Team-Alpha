@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Redirect} from "react-router-dom";
+import { NavLink} from "react-router-dom";
 import { Container,Jumbotron } from "react-bootstrap";
 import { firebase, auth} from "../firebase";
 
@@ -66,12 +66,15 @@ class UserProfile extends Component {
         if(this.state.currentUser){
           return <Container>
           <Jumbotron className="background-transparent">
-          <h1>Welcome to the Dashboard</h1>
+          <h1>My Profile</h1>
             <p>Display Name: {this.state.currentUser.displayName}</p>
             <p>Email: {this.state.currentUser.email}</p>
             <p>Scores: {-1* this.state.currentUser.scores}</p>
             <p>Game Played: { this.state.currentUser.played_games}</p>
             {/* {this.state.currentUser.photoURL?<p> </p>:<p>Username:{this.state.currentUser.photoURL}</p>} */}
+            <NavLink to="/dashboard" activeClassName="active">
+                Go Back
+              </NavLink>
           </Jumbotron>
           </Container>
 

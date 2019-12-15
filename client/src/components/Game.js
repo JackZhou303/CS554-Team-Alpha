@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import {Link, NavLink} from "react-router-dom";
-import {Form, FormControl, InputGroup, Button, Jumbotron} from 'react-bootstrap'
+import {NavLink} from "react-router-dom";
+import {Jumbotron} from 'react-bootstrap'
 import { ServiceApi } from '../service';
 import {auth,firebase} from "../firebase";
 
@@ -272,7 +272,7 @@ export default class Game extends Component {
         timer = (
             <div>
             { minutes === 0 && seconds === 0
-                        ? <div><h1>Game End</h1> <h1>Final Points: {this.state.points}</h1><Link to={`/`}><button className="pageBtn" >Home</button></Link></div>
+                        ? <div><h1>Game End</h1> <h1>Final Points: {this.state.points}</h1><NavLink to='/dashboard'><button className="pageBtn" >To Dashboard</button></NavLink></div>
                         : <div><p>This is your life Bar</p><h1>Time Remaining: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}</h1></div>
             }
             </div>
@@ -285,7 +285,7 @@ export default class Game extends Component {
                         <input id="answer-form" type="text" onChange={this.handle_answer} />
                         <input onClick={this.verify_answer} type="button" value="Submit" />
                     </form>
-                        <button id='btnGiveCommand'>Give Command!</button>
+                        <button id='btnGiveCommand'>Voice Submit</button>
                 </div>
 
         );
@@ -296,7 +296,7 @@ export default class Game extends Component {
         else if(this.state.result && !this.state.isPlayin ) {
             //let user = auth.currentUser();
             
-            return (<Jumbotron className="background-transparent"><div><h1>Game End</h1> <h1>Final Points: {this.state.points}</h1><button className="game_btn" onClick={this.submit_scores}>Submit My Scores</button><Link to={`/`}><button className="pageBtn" >Home</button></Link></div></Jumbotron>)
+            return (<Jumbotron className="background-transparent"><div><h1>Game End</h1> <h1>Final Points: {this.state.points}</h1><button className="game_btn" onClick={this.submit_scores}>Submit My Scores</button><NavLink to='/dashboard'><button className="pageBtn" >To Dashboard</button></NavLink></div></Jumbotron>)
         }   
         else if(this.state.device_ready && this.state.isPlayin ) {
             return ( 

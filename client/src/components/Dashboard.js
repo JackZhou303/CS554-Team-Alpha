@@ -9,7 +9,7 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isNew: true
+      isNew: undefined
     };
   }
 
@@ -30,6 +30,11 @@ class Dashboard extends Component {
     if(user_snapshot){
       this.setState({
         isNew: false
+      })
+    }
+    else {
+      this.setState({
+        isNew: true
       })
     }
   }
@@ -83,7 +88,7 @@ class Dashboard extends Component {
             <Row>
             {!this.state.isNew? game_link: ""}
               <br/>
-              {!this.state.isNew? profile_link: profile_link_with_warning}
+            {!this.state.isNew? profile_link: profile_link_with_warning}
           </Row>
             
             {signout}

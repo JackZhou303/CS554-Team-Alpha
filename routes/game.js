@@ -206,9 +206,9 @@ router.get('/callback', async (req,res) => {
       setTimeout(() => setInterval(async function () {
         await swap_and_refresh_token()}, 3600000), 3600000);
 
-      res.redirect("http://localhost:4000/api/game-control/token")
+      res.json({"Token_Retrival": "Success"})
     } catch(err) {
-      res.redirect('/#/error/invalid token');
+      res.json({"Token_Retrival": "Fail"})
     }
   });
 

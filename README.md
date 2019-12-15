@@ -40,7 +40,7 @@ and then you can run
 ```
 
 ## VIDEO LINK
- Here is the link for the [video](https://youtube.com)
+ Here is the link for the [video](https://youtu.be/3ZHkFawv-t8)
 
 ## WALKTHROUGH
 As you see the application running, we have following features in here: 

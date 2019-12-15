@@ -59,7 +59,7 @@ To run the service you will need an access token at server side. So as soon as y
 
 ### Technologies:
 1. Firebase AUTH
-2. Firebase REALTIM-DATABASE
+2. Firebase REALTIME-DATABASE
 3. Firebase Cloud Datastore
 4. Redis - for token saving
 5. React - For front end

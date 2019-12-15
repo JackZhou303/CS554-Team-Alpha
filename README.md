@@ -1,6 +1,6 @@
 # MusiXPlay
 
-Music Quiz
+Music Expert/ Quiz
 
 ## NOTE : As soon as you launch server, go to [http://localhost:4000/](http://localhost:4000/) and get your access token by logging in with spotify premium credentials. Then only you would be able to pass the loading screen (at client side) and enjoy the app.
 

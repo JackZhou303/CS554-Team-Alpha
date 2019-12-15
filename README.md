@@ -55,7 +55,7 @@ You will need to login to our system first. Also the tricky part is, since we ar
 ## SPOTIFY LOGIN/ACCESS TOKEN 
 To run the service you will need an access token at server side. So as soon as you launched the server by running ```npm start```, you can see that server is running at port [4000](http://localhost:4000). 
 
-#### You will have to initiate by hitting [4000/](http://localhost:4000/) which will take you to the spotify login url. Login yourself with a premium credentials and you will see the status response. And Now you would be able to play the game. We can provide you with our Spotify account. Otherwise, you will have to set up your own Spotify environment and change the credientials in .env file. Make sure you name your libraries as in "Demo1", "Demo2", and ""Demo3". 
+#### You will have to initiate by hitting [4000/](http://localhost:4000/) which will take you to the spotify login url. Login yourself with a premium credentials and you will see the status response. And Now you would be able to play the game. We can provide you with our Spotify account. Otherwise, you will have to set up your own Spotify environment and change the credientials in .env file. Make sure you name your libraries as in "Demo1", "Demo2", and ""Demo3". We are giving cheatsheet of answer through logging outputs.
 
 ### Technologies:
 1. Firebase AUTH
